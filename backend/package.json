@@ -1,0 +1,23 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SyTW2425/Proyecto-E09.git"
+  },
+  "author": "Gabriel Ángel Canals Salleras & José Ángel Marrero Domínguez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SyTW2425/Proyecto-E09/issues"
+  },
+  "homepage": "https://github.com/SyTW2425/Proyecto-E09#readme",
+  "description": "",
+  "dependencies": {
+    "mongoose": "^8.8.1"
+  }
+}
