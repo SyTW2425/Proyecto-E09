@@ -1,4 +1,3 @@
-// simple express server
 const express = require('express');
 
 export const app = express();

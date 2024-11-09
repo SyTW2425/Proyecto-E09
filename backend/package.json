@@ -18,6 +18,7 @@
   "homepage": "https://github.com/SyTW2425/Proyecto-E09#readme",
   "description": "",
   "dependencies": {
+    "express": "^4.21.1",
     "mongoose": "^8.8.1"
   }
 }
