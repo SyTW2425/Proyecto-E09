@@ -18,7 +18,9 @@
   "homepage": "https://github.com/SyTW2425/Proyecto-E09#readme",
   "description": "",
   "dependencies": {
+    "@types/mongodb": "^4.0.7",
     "express": "^4.21.1",
+    "mongodb": "^6.10.0",
     "mongoose": "^8.8.1"
   }
 }
