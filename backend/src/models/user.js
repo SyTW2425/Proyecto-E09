@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const userSchema = new Schema({
   username: {
@@ -21,7 +22,10 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  role: [],
+  roles: [{
+    ref:"role",
+    type: Schema.Types.ObjectId
+  }],
   level: {
     type: Number,
     default: 1
@@ -32,6 +36,15 @@ const userSchema = new Schema({
   }
 });
 
-const User = mongoose.model('User', userSchema);
+userSchema.statics.encryptPassword = async (password) => {
+  return await bcrypt.hash(password, 10);
+}
 
+userSchema.statics.comparePassword = async (password, receivedPassword) => {
+  return await bcrypt.compare(password, receivedPassword);
+}
+
+const User = mongoose.model('User', userSchema);
 module.exports = User;
+
+export default model('User', userSchema);

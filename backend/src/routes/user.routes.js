@@ -2,6 +2,9 @@ import 'dotenv/config';
 import { Router } from 'express';
 import { User } from '../models';
 
+import * as userController from '../controllers/user.controller';
+import { authJwt, validator } from '../middlewares';
+
 export const userRouter = Router();
 
 userRouter.get('/user', async (req, res) => {
@@ -38,7 +41,8 @@ userRouter.get('/user/:username', async (req, res) => {
 	}
 });
 
-userRouter.post('/user', async (req, res) => {
+userRouter.post('/user', [authJwt.verifyToken, authJwt.isAdmin, validator.checkDuplicateUsernameOrEmail, validator.checkRolesExisted],
+	            userController.createUser, async (req, res) => {
 	try {
 		const user = new User(req.body);
 		await user.save();
