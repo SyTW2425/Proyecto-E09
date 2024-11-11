@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, RouterModule } from '@angular/router';
 import { provideClientHydration } from '@angular/platform-browser';
 
 import { routes } from './app.routes';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  template: `
+    <router-outlet></router-outlet>
+  `,
   standalone: true,
+  imports: [RouterModule],
 })
-export class AppComponent {
-  title = 'frontend';
-}
+export class AppComponent {}

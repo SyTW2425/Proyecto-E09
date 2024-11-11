@@ -5,11 +5,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatButtonModule } from '@angular/material/button';
 import {User} from '../user';
+import { CommonModule } from '@angular/common';
 
 @Component({
 	selector: 'app-login',
 	standalone: true,
 	imports: [
+		CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -17,7 +19,7 @@ import {User} from '../user';
     MatButtonModule,
   ],
 	template: `
-
+<main>
 <form class="login-form" autocomplete="off" [formGroup]="loginForm" (submit)="submitForm()">
   <mat-form-field>
     <mat-label>Usuario</mat-label>
@@ -37,14 +39,9 @@ import {User} from '../user';
   
   <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Iniciar sesión</button>
 </form>
-
+</main>
 	`,
-	styles: [`
-	.employee-form {
-		width: 50%;
-		margin: 0 auto;
-	}
-	`]
+	styleUrls: ['./login.component.css']
 })
 export class LoginFormComponent {
 	initialState = input<User>();
