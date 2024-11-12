@@ -20,25 +20,26 @@ import { CommonModule } from '@angular/common';
   ],
 	template: `
 <main>
-<form class="login-form" autocomplete="off" [formGroup]="loginForm" (submit)="submitForm()">
-  <mat-form-field>
-    <mat-label>Usuario</mat-label>
-    <input matInput formControlName="username" placeholder="Usuario" required>
-    <small *ngIf="username.invalid && (username.dirty || username.touched)">
-      El usuario es requerido
-    </small>
-  </mat-form-field>
-  
-  <mat-form-field>
-    <mat-label>Contraseña</mat-label>
-    <input matInput formControlName="password" placeholder="Contraseña" required>
-    <small *ngIf="password.invalid && (password.dirty || password.touched)">
-      La contraseña es requerida
-    </small>
-  </mat-form-field>
-  
-  <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Iniciar sesión</button>
-</form>
+<div class="wrapper">
+    <form action="#">
+      <h2>SIGN IN</h2>
+        <div class="input-field">
+        <input type="text" required>
+        <label>Enter your email</label>
+      </div>
+      <div class="input-field">
+        <input type="password" required>
+        <label>Enter your password</label>
+      </div>
+      <div class="forget">
+        <a href="#">Forgot password?</a>
+      </div>
+      <button type="submit">Log In</button>
+      <div class="register">
+        <p>Don't have an account? <a href="#" class="register-title">Register</a></p>
+      </div>
+    </form>
+  </div>
 </main>
 	`,
 	styleUrls: ['./login.component.css']

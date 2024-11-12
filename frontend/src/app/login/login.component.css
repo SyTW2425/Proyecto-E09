@@ -19,6 +19,7 @@ main {
 	height: 100vh;
 	margin: 0;
 	overflow: hidden;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 main::before {
@@ -37,52 +38,100 @@ main::before {
 }
 
 
-h1 {
-  font-size: 80px;
-	color: white;
-	margin-bottom: 20px;
-	text-align: center;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
+.wrapper {
+  width: 400px;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  border: 1px solid #233f53;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
-
-/* CSS */
-.button-52 {
-  font-size: 35px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  padding: 13px 20px 13px;
-  outline: 0;
-  border: 2px solid rgb(189, 189, 189);
-  cursor: pointer;
+form {
+  display: flex;
+  flex-direction: column;
+}
+h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #233f53;
+}
+.input-field {
   position: relative;
-  background-color: rgba(0, 0, 0, 0);
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-	color: white;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-bottom: 2px solid #233f53;
+  margin: 15px 0;
 }
-
-.button-52:after {
-  content: "";
-	background-image: linear-gradient(315deg, #3162cc 0%, #3aa9dd 74%);
-	width: 100%;
-  z-index: -1;
+.input-field label {
   position: absolute;
-  height: 100%;
-  top: 7px;
-  left: 7px;
-  transition: 0.2s;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  color: #233f53;
+  font-size: 16px;
+  pointer-events: none;
+  transition: 0.15s ease;
+}
+.input-field input {
+  width: 100%;
+  height: 40px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: #233f53;
+}
+.input-field input:focus~label,
+.input-field input:valid~label {
+  font-size: 0.8rem;
+  top: 10px;
+  transform: translateY(-120%);
+}
+.forget {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 25px 0 35px 0;
+}
+.forget label {
+  display: flex;
+  align-items: center;
+}
+.forget label p {
+  margin-left: 8px;
+}
+.wrapper a {
+  color: rgb(83, 82, 90);
+  text-decoration: none;
+}
+.wrapper a:hover {
+  text-decoration: underline;
 }
 
-.button-52:hover:after {
-  top: 0px;
-  left: 0px;
+button {
+  background: linear-gradient(45deg, #233f53, #296189);
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 16px;
+  border: 2px solid transparent;
+  transition: color 0.3s, border-color 0.3s, background 0.3s;
 }
 
-@media (min-width: 768px) {
-  .button-52 {
-    padding: 13px 50px 13px;
-  }
+button:hover {
+  color: #233f53;
+  border-color: #233f53;
+  background: linear-gradient(45deg, rgba(35, 63, 83, 0.15), rgba(41, 97, 137, 0.15));
+}
+
+.register {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.register-title{
+	color: rgb(83, 82, 90);
+	font-weight: bold;
 }
