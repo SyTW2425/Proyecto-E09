@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { User } from '../user';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -37,7 +36,6 @@ import { RouterModule } from '@angular/router';
         <input matInput type="password" formControlName="passwordConfirm" required>
         <label>Confirm your password</label>
       </div>
-      
       <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid">Register</button>
       
       <div class="login">
@@ -51,10 +49,10 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./register.component.css']
 })
 export class RegisterFormComponent {
-  @Input() initialState: User | null = null;
+  @Input() initialState: { email: string; username: string } | undefined;
 
-  @Output() formValuesChanged = new EventEmitter<User>();
-  @Output() formSubmitted = new EventEmitter<User>();
+  @Output() formValuesChanged = new EventEmitter<{ email: string; username: string; password: string }>();
+  @Output() formSubmitted = new EventEmitter<{ email: string; username: string; password: string }>();
 
   constructor(private formBuilder: FormBuilder) {
     if (this.initialState) {
@@ -94,7 +92,7 @@ export class RegisterFormComponent {
 
   submitForm() {
     if (this.registerForm.valid) {
-      this.formSubmitted.emit(this.registerForm.value as User);
+      this.formSubmitted.emit(this.registerForm.value as { username: string; email: string; password: string });
     }
   }
 }
