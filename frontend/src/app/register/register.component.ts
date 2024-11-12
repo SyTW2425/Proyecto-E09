@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../user.service';
 
 @Component({
   selector: 'app-register',
@@ -49,28 +50,20 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./register.component.css']
 })
 export class RegisterFormComponent {
-  @Input() initialState: { email: string; username: string } | undefined;
+  registerForm: FormGroup;
 
-  @Output() formValuesChanged = new EventEmitter<{ email: string; username: string; password: string }>();
-  @Output() formSubmitted = new EventEmitter<{ email: string; username: string; password: string }>();
-
-  constructor(private formBuilder: FormBuilder) {
-    if (this.initialState) {
-      this.registerForm.setValue({
-        username: this.initialState.username,
-        email: this.initialState.email,
-        password: '',
-        passwordConfirm: ''
-      });
-    }
+  constructor(private formBuilder: FormBuilder, private authService: AuthService) {
+    this.registerForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+      passwordConfirm: ['', Validators.required]
+    }, { validators: this.passwordMatchValidator });
   }
 
-  registerForm = this.formBuilder.group({
-    email: ['', [Validators.required, Validators.email]],
-    username: ['', Validators.required],
-    password: ['', Validators.required],
-    passwordConfirm: ['', Validators.required]
-  }, { validators: this.passwordMatchValidator });
+  get email() {
+    return this.registerForm.get('email')!;
+  }
 
   get username() {
     return this.registerForm.get('username')!;
@@ -80,19 +73,23 @@ export class RegisterFormComponent {
     return this.registerForm.get('password')!;
   }
 
-  get email() {
-    return this.registerForm.get('email')!;
-  }
-
   private passwordMatchValidator(form: any) {
     const password = form.get('password').value;
     const passwordConfirm = form.get('passwordConfirm').value;
     return password === passwordConfirm ? null : { mismatch: true };
   }
 
-  submitForm() {
+  submitForm() {  
     if (this.registerForm.valid) {
-      this.formSubmitted.emit(this.registerForm.value as { username: string; email: string; password: string });
+      const { email, username, password } = this.registerForm.value;
+      this.authService.register(username, password, email).subscribe(
+        (user) => {
+          console.log('Registration successful:', user);
+        },
+        (error) => {
+          console.error('Registration error:', error);
+        }
+      );
     }
   }
 }

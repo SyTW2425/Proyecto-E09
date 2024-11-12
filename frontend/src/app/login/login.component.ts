@@ -1,8 +1,8 @@
 import { Component, effect, EventEmitter, input, Output } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import {User} from '../user';
+import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../user.service';
 
 @Component({
 	selector: 'app-login',
@@ -40,18 +40,26 @@ import { RouterModule } from '@angular/router';
 	styleUrls: ['./login.component.css']
 })
 export class LoginFormComponent {
-  @Output() loginSubmitted = new EventEmitter<{ username: string; password: string }>();
+  loginForm: FormGroup;
 
-  loginForm = this.formBuilder.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required]
-  });
-
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(private formBuilder: FormBuilder, private authService: AuthService) {
+    this.loginForm = this.formBuilder.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+  }
 
   onSubmit() {
     if (this.loginForm.valid) {
-      this.loginSubmitted.emit(this.loginForm.value as { username: string; password: string });
+      const { username, password } = this.loginForm.value;
+      this.authService.login(username, password).subscribe(
+        (response) => {
+          console.log('Login successful:', response.token);
+        },
+        (error) => {
+          console.error('Login error:', error);
+        }
+      );
     }
   }
 }
