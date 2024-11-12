@@ -29,7 +29,7 @@ main::before {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-image: url('../../assets/background-login.png');
+	background-image: url('../../assets/background-register.jpg');
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -37,13 +37,17 @@ main::before {
 	z-index: -2;
 }
 
+.login p {
+  color: white;
+  margin-top: 3%;
+}
 
 .wrapper {
   width: 400px;
   border-radius: 8px;
   padding: 30px;
   text-align: center;
-  border: 1px solid #233f53;
+  border: 1px solid white;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
@@ -54,11 +58,11 @@ form {
 h2 {
   font-size: 2rem;
   margin-bottom: 20px;
-  color: #233f53;
+  color: white;
 }
 .input-field {
   position: relative;
-  border-bottom: 2px solid #233f53;
+  border-bottom: 2px solid white;
   margin: 15px 0;
 }
 .input-field label {
@@ -66,10 +70,11 @@ h2 {
   top: 50%;
   left: 0;
   transform: translateY(-50%);
-  color: #233f53;
+  color: white;
   font-size: 16px;
   pointer-events: none;
   transition: 0.15s ease;
+  font-weight: bold !important;
 }
 .input-field input {
   width: 100%;
@@ -78,10 +83,11 @@ h2 {
   border: none;
   outline: none;
   font-size: 16px;
-  color: #233f53;
+  color: white;
 }
 .input-field input:focus~label,
 .input-field input:valid~label {
+  font-weight: bold !important;
   font-size: 0.8rem;
   top: 10px;
   transform: translateY(-120%);
@@ -100,16 +106,16 @@ h2 {
   margin-left: 8px;
 }
 .wrapper a {
-  color: rgb(83, 82, 90);
+  color: white;
   text-decoration: none;
 }
 .wrapper a:hover {
   text-decoration: underline;
-	cursor: pointer;
 }
 
 button {
-  background: linear-gradient(45deg, #233f53, #296189);
+  background: linear-gradient(45deg, rgba(81, 114, 137), rgba(46, 144, 214));
+  border-color: white;
   color: white;
   font-weight: 600;
   border: none;
@@ -117,14 +123,14 @@ button {
   cursor: pointer;
   border-radius: 3px;
   font-size: 16px;
-  border: 2px solid transparent;
   transition: color 0.3s, border-color 0.3s, background 0.3s;
 }
 
 button:hover {
-  color: #233f53;
-  border-color: #233f53;
-  background: linear-gradient(45deg , rgba(35, 63, 83, 0.15), rgba(41, 97, 137, 0.15));
+  color: white;
+  border-color: white;
+  background: linear-gradient(45deg, rgba(81, 114, 137, 0.85), rgba(46, 144, 214, 0.85));
+  transition: color 0.3s, border-color 0.3s, background 0.3s;
 }
 
 .register {
@@ -133,6 +139,6 @@ button:hover {
 }
 
 .register-title{
-	color: rgb(83, 82, 90);
+	color: white;
 	font-weight: bold;
 }
