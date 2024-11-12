@@ -1,8 +1,7 @@
-import 'dotenv/config';
 import { Router } from 'express';
 
-import * as authController from '../controllers/auth.controller';
-import { authJwt, validator } from '../middlewares';
+import * as authController from '../controllers/auth.controller.js';
+import { authJwt, validator } from '../middlewares/index.js';
 
 export const authRouter = Router();
 

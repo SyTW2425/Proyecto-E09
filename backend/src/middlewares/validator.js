@@ -1,5 +1,5 @@
-import { ROLES } from '../models/role';
-import User from '../models/user.model';
+import { ROLES } from '../models/role.js';
+import User from '../models/user.js';
 
 export const checkRolesExisted = (req, res, next) => {
   if (req.body.roles) {

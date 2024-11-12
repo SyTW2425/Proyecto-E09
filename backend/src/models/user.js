@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose'; // Asegúrate de importar mongoose de forma correcta
 import bcrypt from 'bcrypt';
 
 const userSchema = new Schema({
@@ -23,7 +23,7 @@ const userSchema = new Schema({
     default: Date.now
   },
   roles: [{
-    ref:"role",
+    ref: "role",
     type: Schema.Types.ObjectId
   }],
   level: {
@@ -36,15 +36,17 @@ const userSchema = new Schema({
   }
 });
 
+// Métodos para encriptar y comparar contraseñas
 userSchema.statics.encryptPassword = async (password) => {
   return await bcrypt.hash(password, 10);
-}
+};
 
 userSchema.statics.comparePassword = async (password, receivedPassword) => {
   return await bcrypt.compare(password, receivedPassword);
-}
+};
 
+// Define el modelo User
 const User = mongoose.model('User', userSchema);
-module.exports = User;
 
-export default model('User', userSchema);
+// Exporta el modelo User utilizando la sintaxis de ES Modules
+export default User;

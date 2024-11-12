@@ -1,4 +1,4 @@
-import * as authJwt from "./authorization";
-import * as validator from "./validator";
+import * as authJwt from "./authorization.js";
+import * as validator from "./validator.js";
 
 export { authJwt,  validator };
