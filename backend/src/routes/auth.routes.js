@@ -10,7 +10,7 @@ authRouter.post('/login', authController.login, (req, res) => {
     }
 );
 
-authRouter.post('/register', [validator.checkDuplicateUsernameOrEmail, validator.checkRolesExisted], authController.register, (req, res) => {
+authRouter.post('/register', authController.register, (req, res) => {
     res.send('Register route');
     }
 );

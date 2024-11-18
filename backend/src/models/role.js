@@ -12,3 +12,5 @@ const roleSchema = new Schema({
     required: true
   }
 });
+
+export default model('Role', roleSchema);

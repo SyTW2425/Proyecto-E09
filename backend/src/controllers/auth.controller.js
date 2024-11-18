@@ -1,8 +1,10 @@
 import User from '../models/user.js';
+import Role from '../models/role.js';
 import jwt from 'jsonwebtoken';
 
 export const register = async (req, res) => {
   const { username, email, password, roles } = req.body;
+  console.log(req.body);
   const newUser = new User({ username, email, password: await User.encryptPassword(password) });
   
   if (roles) {
@@ -12,6 +14,7 @@ export const register = async (req, res) => {
     const role = await Role.findOne({ name: 'user' });
     newUser.roles = [role._id];
   }
+  
   const user = await newUser.save();
   
  jwt.sign({ id: user._id }, process.env.SECRET, {
@@ -19,12 +22,10 @@ export const register = async (req, res) => {
   }, (error, token) => {
     if (error) {
       console.error(error.message);
-      res.sendStatus(500);
+      return res.sendStatus(500);
     }
     res.status(201).json({ token });
   });
-
-  res.status(201).json(user);
 }
 
 export const login = async (req, res) => {

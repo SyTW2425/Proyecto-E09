@@ -20,4 +20,9 @@ export class AuthService {
 		return this.http.post<{ token: string }>(`${this.apiUrl}/register`, body);
 	}
 
+
+  getUserName(): Observable<string> {
+    return this.http.get<string>(`${this.apiUrl}/username`);
+  }
+
 }

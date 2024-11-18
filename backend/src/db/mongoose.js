@@ -1,18 +1,5 @@
 import { connect } from 'mongoose';
 
-export default async function connectDB() {
-  try {
-      await connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: true,
-      useCreateIndex: true,
-      });
-      console.log('MongoDB connected');
-  } catch (error) {
-      console.error(error.message);
-      process.exit(1);
-  }
-}
-
-module.exports = connectDB;
+connect("mongodb://admin:canals@172.16.113.2/anitrackguess?retryWrites=true&w=majority")
+      .then(db => console.log('DB is connected'))
+      .catch(error => console.log(error));

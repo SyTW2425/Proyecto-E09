@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { User } from '../models';
 
-import * as userController from '../controllers/user.controller';
-import { authJwt, validator } from '../middlewares';
+import User from '../models/user.js';
+
+import * as userController from '../controllers/user.controller.js';
+import { authJwt, validator } from '../middlewares/index.js';
 
 export const userRouter = Router();
 
