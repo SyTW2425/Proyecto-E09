@@ -1,0 +1,190 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+main {
+  min-height: 100vh;
+  background: #D9DCD6;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image: url('../../assets/background-menu.jpg');
+  background-size: cover;
+}
+
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 15%;
+  display: flex;
+  flex-direction: column;
+  background: #16425B;
+  padding: 25px 20px;
+}
+
+
+.sidebar .sidebar-header {
+  display: flex;
+  align-items: center;
+}
+
+
+.sidebar .sidebar-header h2 {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sidebar-links h4 {
+  color: #fff;
+  font-weight: 500;
+  white-space: nowrap;
+  margin: 10px 0;
+  position: relative;
+}
+
+
+
+.sidebar-links {
+  list-style: none;
+  margin-top: 20px;
+  height: 80%;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.sidebar-links::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar-links li a {
+  display: flex;
+  align-items: center;
+  gap: 0 20px;
+  color: #fff;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 15px 10px;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.sidebar-links li a:hover {
+  color: #161a2d;
+  background: #fff;
+  border-radius: 4px;
+}
+
+.user-account {
+  margin-top: auto;
+  padding: 12px 10px;
+  margin-left: -10px;
+  background: #fff;
+  border-radius: 4px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  color: #161a2d;
+}
+
+.user-profile img {
+  width: 42px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+.user-profile h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.user-profile span {
+  font-size: 0.775rem;
+  font-weight: 600;
+}
+
+.user-detail {
+  margin-left: 23px;
+  white-space: nowrap;
+}
+
+
+/* CSS */
+.button-89 {
+  --b: 3px;   /* border thickness */
+  --s: .45em; /* size of the corner */
+  --color: #D9DCD6;
+  aspect-ratio: 1/1;
+  color: var(--color);
+  --_p: var(--s);
+  background:
+    conic-gradient(from 90deg at var(--b) var(--b),#9e38d400 90deg,var(--color) 0)
+    var(--_p) var(--_p)/calc(100% - var(--b) - 2*var(--_p)) calc(100% - var(--b) - 2*var(--_p));
+  transition: .3s linear, color 0s, background-color 0s;
+  outline: var(--b) solid #00000000;
+  outline-offset: .6em;
+  font-size: 45px;
+  font-weight: bold;
+  border: 0;
+  width: 40vh;
+
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+
+  display: flex;      
+  flex-direction: column;
+  align-items: center;   
+  justify-content: center; 
+  padding: 2%;          
+  cursor: pointer;        
+}
+
+.solo-game {
+  position: absolute;
+  transform: translate(120%, 10%);
+}
+
+.multi-game {
+  position: absolute;
+  transform: translate(300%, 10%);
+}
+
+.quick-game {
+  position: absolute;
+  transform: translate(120%, 130%);
+}
+
+.infinite-game {
+  position: absolute;
+  transform: translate(300%, 130%);
+}
+
+.button-89 .mat-icon {
+  transform: scale(7);
+  margin-bottom: 40px;
+  margin-top: 80px;
+  color: #D9DCD6;
+}
+
+.button-89 .text {
+  margin-top: 30px;
+}
+
+.button-89:hover,
+.button-89:focus-visible{
+  --_p: 0px;
+  outline-color: var(--color);
+  outline-offset: .05em;
+}
+
+.button-89:active {
+  background: var(--color);
+  color: #fff;
+}
