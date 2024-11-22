@@ -7,8 +7,10 @@ import userRouter from './routes/user.routes.js';
 import { createRoles } from './libs/initialSetup.js';
 
 import 'dotenv/config';
+import cors from 'cors';
 
 export const app = express();
+app.use(cors());
 createRoles();
 const port = process.env.PORT || 3000;
 

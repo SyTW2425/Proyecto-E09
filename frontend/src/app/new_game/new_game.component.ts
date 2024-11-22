@@ -3,6 +3,7 @@ import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';  // Import MatIconModule
 import { AuthService } from '../user.service';
 
+
 @Component({
   selector: 'app-new_game',
   templateUrl: './new_game.component.html',
@@ -16,10 +17,7 @@ export class NewGameComponent implements OnInit {
   constructor(private userService: AuthService) {}
 
   ngOnInit() {
-    this.userName = 'John Doe';
-    /*this.userService.getUserName().subscribe((name: string) => {
-      this.userName = name || 'John Doe';
-    });*/
+    this.userName = localStorage.getItem('username') || 'John Doe';
   }
 
   newGame() {}

@@ -1,28 +1,72 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = 'http://localhost:3000/auth'; // Agregado '/auth' para claridad en las rutas
 
   constructor(private http: HttpClient) {}
 
-  login(username: string, password: string): Observable<{ token: string }> {
-    const body = { username, password };
-    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, body);
+  /**
+   * Realiza una solicitud de inicio de sesión.
+   * @param email Nombre de usuario.
+   * @param password Contraseña del usuario.
+   * @returns Un Observable que emite el token de autenticación.
+   */
+  login(email: string, password: string): Observable<{user: { username: string, email: string, token: string }}> {
+    const body = { email, password };
+    return this.http
+      .post<{user: { username: string, email: string, token: string }}>(`${this.apiUrl}/login`, body)
+      .pipe(catchError(this.handleError));
   }
 
-	register(username: string, password: string, email: string): Observable<{ token: string }> {
-		const body = { username, password, email };
-		return this.http.post<{ token: string }>(`${this.apiUrl}/register`, body);
-	}
-
-
-  getUserName(): Observable<string> {
-    return this.http.get<string>(`${this.apiUrl}/username`);
+  /**
+   * Realiza una solicitud de registro.
+   * @param username Nombre de usuario.
+   * @param password Contraseña del usuario.
+   * @param email Email del usuario.
+   * @returns Un Observable que emite el token de autenticación.
+   */
+  register(
+    username: string,
+    password: string,
+    email: string
+  ): Observable<{ token: string }> {
+    const body = { username, password, email };
+    return this.http
+      .post<{ token: string }>(`${this.apiUrl}/register`, body)
+      .pipe(catchError(this.handleError));
   }
 
+  /**
+   * Obtiene el nombre de usuario actual.
+   * @returns Un Observable que emite el nombre de usuario.
+   */
+  getUser(): Observable<{ username: string, email: string, password: string, token: string }> {
+    return this.http
+      .get<{ username: string, email: string, password: string, token: string }>(`${this.apiUrl}/user`)
+      .pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Manejo de errores centralizado.
+   * @param error Objeto de error recibido.
+   * @returns Un Observable que emite un error transformado.
+   */
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'An unknown error occurred!';
+    if (error.error instanceof ErrorEvent) {
+      // Error del cliente
+      errorMessage = `Client error: ${error.error.message}`;
+    } else {
+      // Error del servidor
+      errorMessage = `Server error: ${error.status}, message: ${error.message}`;
+    }
+    console.error(errorMessage);
+    return throwError(() => new Error(errorMessage));
+  }
 }

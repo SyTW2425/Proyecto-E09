@@ -23,7 +23,7 @@ const userSchema = new Schema({
     default: Date.now
   },
   roles: [{
-    ref: "role",
+    ref: "Role",
     type: Schema.Types.ObjectId
   }],
   level: {

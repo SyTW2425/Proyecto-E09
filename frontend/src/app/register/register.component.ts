@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../user.service';
 
 @Component({
@@ -37,8 +37,13 @@ import { AuthService } from '../user.service';
         <input matInput type="password" formControlName="passwordConfirm" required>
         <label>Confirm your password</label>
       </div>
-      <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid">Register</button>
-      
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid || loading">
+        {{ loading ? 'Registering...' : 'Register' }}
+      </button>
+      <div *ngIf="registerForm.errors?.['mismatch']">
+        <p class="error">Passwords do not match</p>
+      </div>
       <div class="login">
         <p>Already have an account?</p>
         <a routerLink="/login" class="register-title">Sign in</a>
@@ -52,7 +57,7 @@ import { AuthService } from '../user.service';
 export class RegisterFormComponent {
   registerForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private authService: AuthService) {
+  constructor(private formBuilder: FormBuilder, private authService: AuthService, private router: Router) {
     this.registerForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       username: ['', Validators.required],
@@ -78,16 +83,25 @@ export class RegisterFormComponent {
     const passwordConfirm = form.get('passwordConfirm').value;
     return password === passwordConfirm ? null : { mismatch: true };
   }
+ 
+  loading = false;
 
   submitForm() {  
     if (this.registerForm.valid) {
+      this.loading = true;
       const { email, username, password } = this.registerForm.value;
       this.authService.register(username, password, email).subscribe(
         (user) => {
           console.log('Registration successful:', user);
+          this.loading = false;
+          localStorage.setItem('token', user.token);
+          localStorage.setItem('username', username);
+          localStorage.setItem('email', email);
+          this.router.navigate(['/new_game']);
         },
         (error) => {
           console.error('Registration error:', error);
+          this.loading = false;
         }
       );
     }
