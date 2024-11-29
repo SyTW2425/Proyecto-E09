@@ -11,21 +11,24 @@ export const createUser = async (req, res) => {
 }
 
 export const deleteById = async (req, res) => {
-	try {
-    const { id } = req.query;
-		const user = await User.findByIdAndDelete(id);
-		if (!user) {
-			return res.status(404).send({ message: 'User not found' });
-		}
-		res.status(200).json({ message: 'User deleted successfully', user });
-	} catch (error) {
-		res.status(500).send({ message: 'Error deleting user' });
-	}
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({ message: `User with ID ${req.params.id} deleted` });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err });
+  }
 };
 
 export const getUser = async (req, res) => {
   try {
 		const { id, username, email } = req.query; // Get query parameters
+
+		if (req.query.password) {
+			return res.status(404).send({ message: 'Cannot get user by password' });
+		}
 
 		// Update by ID
 		if (id) {

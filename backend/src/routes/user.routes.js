@@ -16,7 +16,7 @@ userRouter.post('/user', [authJwt.verifyToken, authJwt.isAdmin, validator.checkD
   res.send('Create user route');
 });
 
-userRouter.delete('/user', userController.deleteById, async (req, res) => {
+userRouter.delete('/user/:id', userController.deleteById, async (req, res) => {
   res.send(`User with ID ${req.params.id} deleted`);
 });
 
