@@ -7,6 +7,13 @@ import cookieParser from 'cookie-parser';
 export const register = async (req, res) => {
   const { username, email, password, roles } = req.body;
   console.log(req.body);
+
+  if (!username || !email) {
+    return res.status(400).json({ message: 'Username and email are required' });
+  } else if (!password) {
+    return res.status(400).json({ message: 'Password is required' });
+  }
+
   const newUser = new User({ username, email, password: await User.encryptPassword(password) });
   
   const existingUserByUsername = await User.findOne({ username });

@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "jest --detectOpenHandles",
+    "test": "NODE_ENV=test jest",
     "start": "node src/app.js"
   },
   "repository": {
@@ -34,11 +34,12 @@
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
-    "babel-jest": "^29.7.0"
+    "babel-jest": "^29.7.0",
+    "mongodb-memory-server": "^10.1.2"
   },
   "jest": {
-  "transform": {
-    "^.+\\.js$": "babel-jest"
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    }
   }
-}
 }

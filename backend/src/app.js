@@ -10,7 +10,6 @@ import userRouter from './routes/user.routes.js';
 import { createRoles } from './libs/initialSetup.js';
 import { connectDB, closeDB } from './db/mongoose.js';
 
-
 export const app = express();
 app.use(cookieParser());
 app.use(cors());
@@ -22,14 +21,17 @@ app.use('/api', userRouter);
 const server = http.createServer(app);
 
 export const startServer = async () => {
-  await connectDB();
-  await createRoles();
-  const port = process.env.PORT || 3000;
-  server.listen(port, () => {
-		console.log(`Server is running on port ${port}`);
-	});
+	if (process.env.NODE_ENV !== 'test') {
+		await connectDB();
+		const port = process.env.PORT || 3000;
+		server.listen(port, () => {
+			console.log(`Server is running on port ${port}`);
+		});
+	}
+	await createRoles();
 	return server;
 };
+
 startServer();
 
 process.on('SIGINT', async () => {
