@@ -1,0 +1,32 @@
+name: Run Backend Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout your repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Set up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' # Use your Node.js version
+
+    # Navigate to the backend directory and install dependencies
+    - name: Install dependencies
+      working-directory: ./backend
+      run: npm install
+
+    # Run tests in the backend directory
+    - name: Run tests
+      working-directory: ./backend
+      run: npm run test
