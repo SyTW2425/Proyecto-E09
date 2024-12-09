@@ -35,8 +35,13 @@ export const register = async (req, res) => {
   }
   
   const user = await newUser.save();
+
+  const publicData = {
+    username: user.username,
+    email: user.email,
+  };
   
- jwt.sign({ id: user._id }, process.env.SECRET, {
+ jwt.sign({ id: user._id, publicData: publicData }, process.env.SECRET, {
     expiresIn: 86400 // 24 hours
   }, (error, token) => {
     if (error) {
@@ -59,7 +64,7 @@ export const login = async (req, res) => {
     email: userFound.email,
   };
   
-  const token = jwt.sign({ id: userFound._id }, process.env.SECRET, {
+  const token = jwt.sign({ id: userFound._id, publicData: publicData }, process.env.SECRET, {
     expiresIn: 86400 // 24 hours
   });
 
@@ -69,5 +74,5 @@ export const login = async (req, res) => {
     httpOnly: true,
     sameSite: 'lax',
     maxAge: 86400 * 1000 // 24 hours
-  }).json({ user: publicData, token: token });
+  }).json({ token: token }); //.json({ user: publicData, token: token });
 }

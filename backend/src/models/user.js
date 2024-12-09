@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose'; // Asegúrate de importar mongoose de forma correcta
+import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 const userSchema = new Schema({

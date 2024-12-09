@@ -17,10 +17,12 @@ export class AuthService {
    * @param password Contraseña del usuario.
    * @returns Un Observable que emite el token de autenticación.
    */
-  login(email: string, password: string): Observable<{user: { username: string, email: string, token: string }}> {
+  login(email: string, password: string): Observable<{token: string }> {
     const body = { email, password };
     return this.http
-      .post<{user: { username: string, email: string, token: string }}>(`${this.apiUrl}/login`, body)
+      .post<{token: string}>(`${this.apiUrl}/login`, body, {
+        withCredentials: true,
+      })
       .pipe(catchError(this.handleError));
   }
 
@@ -41,6 +43,8 @@ export class AuthService {
       .post<{ token: string }>(`${this.apiUrl}/register`, body)
       .pipe(catchError(this.handleError));
   }
+
+
 
   /**
    * Obtiene el nombre de usuario actual.

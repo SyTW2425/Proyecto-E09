@@ -3,7 +3,7 @@ import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angula
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../user.service';
-
+import { jwtDecode,  JwtPayload } from 'jwt-decode';
 
 @Component({
   selector: 'app-login',
@@ -65,10 +65,10 @@ export class LoginFormComponent {
       const { email, password } = this.loginForm.value;
       this.authService.login(email, password).subscribe(
         (response) => {
-          console.log('Login successful:', response.user.username, " ", response.user.token);
-          localStorage.setItem('token', response.user.token); 
-          localStorage.setItem('username', response.user.username);
-          localStorage.setItem('email', response.user.email);
+          const decodedToken = jwtDecode<any>(response.token);
+          localStorage.setItem('username', decodedToken.publicData.username);
+          localStorage.setItem('email', decodedToken.publicData.email);
+
           this.router.navigate(['/new_game']);
         },
         (error) => {
