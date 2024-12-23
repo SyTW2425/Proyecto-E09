@@ -14,7 +14,7 @@ const gameSchema = new Schema({
         default: 0
     },
     animes: [{
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'AnimeTheme'
     }],
     createdAt : {

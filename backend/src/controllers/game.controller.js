@@ -2,12 +2,30 @@ import axios from 'axios';
 import stringSimilarity from 'string-similarity';
 
 import Game from '../models/game.js';
+import AnimeTheme from '../models/anime.js';
+
+function getRelevantInfo(animethemes) {
+  let listAnimeInfo = [];
+  animethemes.forEach((animeInfo) => {
+    const { anime, song, animethemeentries } = animeInfo;
+    const { images } = anime;
+    const { videos } = animethemeentries[0];
+    animeInfo = {
+      name: anime.name,
+      images: images.map(image => image.link),
+      songName: song.title,
+      video: videos[0].link,
+      audio: videos[0].audio.link
+    };
+    listAnimeInfo.push(animeInfo);
+  })
+  return listAnimeInfo;
+}
 
 export const createGame = async (req, res) => {
   try {
     const { rounds } = req.body; //year, season, media_format
     if (!rounds) return res.status(400).send({ message: 'Rounds is required' });
-
     const url = 'https://api.animethemes.moe/animetheme';
     const params = {
       'page[size]': rounds,
@@ -20,12 +38,19 @@ export const createGame = async (req, res) => {
       include: 'group,anime.images,song.artists,animethemeentries.videos.audio',
     };
     const response = await axios.get(url, { params });
-    const { animethemes } = response.data;
-    console.log(animethemes);
-    const newGame = new Game({ rounds: rounds, animes: { animethemes } });
+
+    const animethemes = response.data;
+    const relevantInfo = getRelevantInfo(animethemes.animethemes);
+    const animeIDs = await Promise.all(relevantInfo.map(async (animeInfo) => {
+      const newAnime = new AnimeTheme(animeInfo);
+      const anime = await newAnime.save();
+      return anime._id;
+    }));
+
+    const newGame = new Game({ rounds: rounds, animes: animeIDs });
     console.log(newGame);
     const game = await newGame.save();
-    return res.status(200).json({ gameId: newGame._id });
+    return res.status(200).json({ gameId: game._id });
   } catch (error) {
     res.status(500).send({ message: 'Error creating game', error });
   }
