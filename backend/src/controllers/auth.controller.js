@@ -53,6 +53,7 @@ export const register = async (req, res) => {
 }
 
 export const login = async (req, res) => {
+
   const userFound = await User.findOne({ email: req.body.email }).populate('roles');
   if (!userFound) return res.status(400).json({ message: 'User not found' });
 
