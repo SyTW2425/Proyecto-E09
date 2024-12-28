@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import {GameService} from '../game.service';
 
 @Component({
   selector: 'app-solo-game-popup',
@@ -10,12 +11,13 @@ import { FormsModule } from '@angular/forms';
 })
 export class SoloGamePopupComponent {
   @Input() categories: string[] = [];
-  @Output() gameConfigured = new EventEmitter<{ rounds: number;  }>();
-
+  @Output() gameConfigured = new EventEmitter<{ rounds: number; }>();
   rounds: number = 1;
 
+  constructor(private gameService: GameService) {}
+
   closePopup() {
-    this.gameConfigured.emit({ rounds: 0});
+    this.gameConfigured.emit({ rounds: 0 });
   }
 
   startGame() {

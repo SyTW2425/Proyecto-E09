@@ -1,0 +1,59 @@
+<main>
+	<div class="header">
+		<a href="/new_game"><mat-icon> arrow_back </mat-icon></a>
+		<a href="#default" class="logo">AniTrackGuess</a>
+		<div class="header-right">
+			<a class="active" href="#home">Home</a>
+			<a href="#contact">Contact</a>
+			<a href="#about">About</a>
+		</div>
+	</div>
+	<div class="central-column">
+		<h1>Ronda: 0/X</h1>
+		<h2>¿Cuál es el nombre de este anime?</h2>
+		<div class="container">
+			<video autoplay name="media" class="video" [src]="videoUrl" frameborder="0" id="my_video" allow="encrypted-media">
+			</video>
+		</div>
+		<form [formGroup]="animeForm" (ngSubmit)="onSubmit()">
+			<input class="input" name="text" type="text" autocomplete="off" placeholder="Insert this anime's name..."
+			formControlName="anime" />
+			<button class="submit-answer" type="submit">Submit Answer!</button>
+		</form>
+	</div>
+	<div class="cover-section">
+		<div class="cover-title">
+			<h2>Cover</h2>
+		</div>
+		<img class="cover" [src]="images[0]" alt="One Piece">
+	</div>
+	<div class="game-overview">
+		<h2>Overview</h2>
+		<div class="game-table">
+			<table>
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Anime</th>
+						<th>Correct</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let round of roundsData">
+						<td>{{ round.roundNumber }}</td>
+						<td>{{ round.anime }}</td>
+						<td *ngIf="round.correct; else elseBlock">
+							<mat-icon class="check">check</mat-icon>
+						</td>
+						<ng-template #elseBlock>
+							<td>
+								<mat-icon class="wrong">close</mat-icon>
+							</td>
+						</ng-template>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</main>

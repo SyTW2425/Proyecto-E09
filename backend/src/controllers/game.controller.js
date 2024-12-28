@@ -2,7 +2,6 @@ import axios from 'axios';
 import stringSimilarity from 'string-similarity';
 
 import Game from '../models/game.js';
-import AnimeTheme from '../models/anime.js';
 
 function getRelevantInfo(animethemes) {
   let listAnimeInfo = [];
@@ -38,19 +37,11 @@ export const createGame = async (req, res) => {
       include: 'group,anime.images,song.artists,animethemeentries.videos.audio',
     };
     const response = await axios.get(url, { params });
-
     const animethemes = response.data;
     const relevantInfo = getRelevantInfo(animethemes.animethemes);
-    const animeIDs = await Promise.all(relevantInfo.map(async (animeInfo) => {
-      const newAnime = new AnimeTheme(animeInfo);
-      const anime = await newAnime.save();
-      return anime._id;
-    }));
-
-    const newGame = new Game({ rounds: rounds, animes: animeIDs });
-    console.log(newGame);
+    const newGame = new Game({ rounds: relevantInfo.length, animes: relevantInfo });
     const game = await newGame.save();
-    return res.status(200).json({ gameId: game._id });
+    return res.status(200).json({ gameId: game._id, rounds: game.rounds });
   } catch (error) {
     res.status(500).send({ message: 'Error creating game', error });
   }
@@ -73,7 +64,7 @@ export const checkAnswer = async (req, res) => {
 
     // Validación secundaria usando similitud de cadenas
     const similarity = stringSimilarity.compareTwoStrings(userAnswer.toLowerCase(), correctAnswer.toLowerCase());
-    const isSimilar = similarity > 0.8; // Umbral de 80% de similitud
+    const isSimilar = similarity > 0.85; // Umbral de 85% de similitud
 
     const correct = isCorrect || isSimilar ? true : false;
     if (correct) {
@@ -96,7 +87,6 @@ export const getGameCurrentInfo = async (req, res) => {
     const { gameId } = req.params;
     const game = await Game.findById(gameId);
     if (!game) return res.status(404).send({ message: 'Game not found' });
-
     const currentInfo = {
       currentRound: game.currentRound,
       score: game.score,
@@ -106,5 +96,17 @@ export const getGameCurrentInfo = async (req, res) => {
   }
   catch (error) {
     res.status(500).send({ message: 'Error getting game', error });
+  }
+}
+
+export const deleteGame = async (req, res) => {
+  try {
+    const { gameId } = req.params;
+    const game = await Game.findByIdAndDelete(gameId);
+    if (!game) return res.status(404).send({ message: 'Game not found' });
+    return res.status(200).send({ message: 'Game deleted' });
+  }
+  catch (error) {
+    res.status(500).send({ message: 'Error deleting game', error });
   }
 }
