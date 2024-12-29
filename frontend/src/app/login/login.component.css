@@ -29,7 +29,7 @@ main::before {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-image: url('../../assets/background-login.png');
+	background-image: url('../../assets/background-login.jpg');
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;

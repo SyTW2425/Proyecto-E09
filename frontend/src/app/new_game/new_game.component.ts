@@ -22,6 +22,9 @@ export class NewGameComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (!document.cookie.includes('token') || document.cookie.toString() === 'token=;') {
+      this.router.navigate(['/login']);
+    }
     this.userName = localStorage.getItem('username') || 'John Doe';
   }
 
@@ -29,6 +32,14 @@ export class NewGameComponent implements OnInit {
 
   showPopup() {
     this.isPopupVisible = true;
+  }
+
+  public logout() {
+    localStorage.removeItem('username');
+    localStorage.removeItem('token');
+    console.log(localStorage.getItem('token'));
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    this.router.navigate(['/login']);
   }
 
   handlePopupResult(result: { rounds: number; } | null) {

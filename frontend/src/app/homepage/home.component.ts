@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { provideRouter, RouterModule } from '@angular/router';
-import { provideClientHydration } from '@angular/platform-browser';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -9,4 +8,15 @@ import { provideClientHydration } from '@angular/platform-browser';
   standalone: true,
   imports: [RouterModule],
 })
-export class HomeComponent {}
+export class HomeComponent {
+
+  constructor( private router: Router ) {}
+
+  public start() {
+    if (document.cookie.includes('token') && document.cookie.toString() !== 'token=;') {
+      this.router.navigate(['/new_game']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
+}

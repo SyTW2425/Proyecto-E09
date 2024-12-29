@@ -19,16 +19,6 @@
         <a href="/stats"><mat-icon>monitoring</mat-icon>Stats</a>
       </li>
       <h4>
-        <span>General</span>
-        <div class="menu-separator"></div>
-      </h4>
-      <li>
-        <a href="/friends"><mat-icon>groups</mat-icon>Friends</a>
-      </li>
-      <li>
-        <a href="/notifications"><mat-icon>notifications_active</mat-icon>Notifications</a>
-      </li>
-      <h4>
         <span>Account</span>
         <div class="menu-separator"></div>
       </h4>
@@ -39,7 +29,7 @@
         <a href="/settings"><mat-icon>settings</mat-icon>Settings</a>
       </li>
       <li>
-        <a href="/logout"><mat-icon>logout</mat-icon>Logout</a>
+        <a (click)="logout()"><mat-icon>logout</mat-icon>Logout</a>
       </li>
     </ul>
     <div class="user-account">

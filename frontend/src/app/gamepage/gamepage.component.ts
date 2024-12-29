@@ -58,6 +58,12 @@ export class GamepageComponent {
 		});
 	}
 
+	ngOnInit() {
+    if (!document.cookie.includes('token') || document.cookie.toString() === 'token=;') {
+      this.router.navigate(['/login']);
+    }
+	}
+
 	ngAfterViewInit() {
 		// Asignar referencia al elemento de video
 		this.videoElement = document.getElementById('my_video') as HTMLVideoElement;

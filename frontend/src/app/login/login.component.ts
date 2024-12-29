@@ -66,6 +66,7 @@ export class LoginFormComponent {
       this.authService.login(email, password).subscribe(
         (response) => {
           const decodedToken = jwtDecode<any>(response.token);
+          document.cookie = `token=${response.token}; path=/; expires=${new Date(decodedToken.exp * 1000).toUTCString()}`;
           localStorage.setItem('username', decodedToken.publicData.username);
           localStorage.setItem('email', decodedToken.publicData.email);
 

@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class GameService {
-  private apiUrl = 'http://localhost:3000/game'; // Agregado '/auth' para claridad en las rutas
+  private apiUrl = 'http://localhost:3000/game';
   private gameData: any;
   constructor(private http: HttpClient) { }
 
