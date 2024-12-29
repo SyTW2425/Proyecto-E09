@@ -1,0 +1,163 @@
+.main {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+  font-size: 2.5rem;
+  margin: 1.2vh;
+  padding: 0;
+  font-weight: bold;
+  color: #16425B;
+}
+
+.obscure-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+    display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-overview {
+  position: absolute;
+  top: 15%;
+  left: 20%;
+  width: 60%;
+  height: 70%;
+  background: white;
+  border-radius: 8px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-overview {
+  flex-direction: column;
+  justify-content: left;
+}
+
+.game-table {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: fit-content;
+  max-height: 50vh;
+  overflow: scroll;
+  border: 1px solid #16425B;
+  border-radius: 6px;
+  width: 70%;
+}
+
+.game-table::-webkit-scrollbar {
+  display: none;
+}
+
+table {
+  display: table;
+  border-color: #16425B;
+  border-collapse: collapse;
+  margin: 0 auto;
+  position: relative;
+  text-align: center;
+  width: 100%;
+  td:not(:last-child),
+  th:not(:last-child) {
+    border-right: 1px solid #16425B;
+  }
+
+  td:first-child,
+  th:first-child,
+  td:last-child,
+  th:last-child {
+    width: 10%;
+    padding-left: 3vw;
+    padding-right: 3vw;
+  }
+
+  thead tr {
+    height: 60px;
+    background: #16425B;
+    font-size: 16px;
+    color: #fff;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #16425B;
+    height: 48px;
+    background: #b7c6e9;
+  }
+}
+
+.wrong {
+  font-size: 25px;
+  vertical-align: middle;
+  color: red;
+  font-weight: bold;
+}
+
+.check {
+  font-size: 25px;
+  vertical-align: middle;
+  color: green;
+  font-weight: bold;
+}
+
+.button {
+  position:absolute;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+button.return-button {
+  position: relative;
+  font: inherit;
+  background-color: #f0f0f0;
+  border: 0;
+  color: #242424;
+  border-radius: 0.5em;
+  font-size: 3rem;
+  padding: 0.375em 1em;
+  margin-top: 2vh;
+  font-weight: 600;
+  text-shadow: 0 0.0625em 0 #fff;
+  box-shadow: inset 0 0.0625em 0 0 #f4f4f4, 0 0.0625em 0 0 #efefef,
+    0 0.125em 0 0 #ececec, 0 0.25em 0 0 #e0e0e0, 0 0.3125em 0 0 #dedede,
+    0 0.375em 0 0 #dcdcdc, 0 0.425em 0 0 #cacaca, 0 0.425em 0.5em 0 #cecece;
+  transition: 0.25s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  cursor: pointer;
+
+  &:active,
+  &:hover {
+    transform: translateY(0.225em);
+    box-shadow: inset 0 0.03em 0 0 #f4f4f4, 0 0.03em 0 0 #efefef,
+      0 0.0625em 0 0 #ececec, 0 0.125em 0 0 #e0e0e0, 0 0.125em 0 0 #dedede,
+      0 0.2em 0 0 #dcdcdc, 0 0.225em 0 0 #cacaca, 0 0.225em 0.375em 0 #cecece;
+
+    &:after {
+      height: calc(100% + 0.225em);
+    }
+  }
+
+  &:after {
+    position: absolute;
+    content: "";
+    display: block;
+    width: 100%;
+    height: calc(100% + 0.375em);
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    transition: height 0.25s ease;
+  }
+}

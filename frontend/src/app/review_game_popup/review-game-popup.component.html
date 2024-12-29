@@ -1,0 +1,33 @@
+<div class="obscure-bg">
+  <div class="game-overview">
+    <h2>Overview</h2>
+    <div class="game-table">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Anime</th>
+            <th>Correct</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let round of roundsData">
+            <td>{{ round.roundNumber }}</td>
+            <td>{{ round.anime }}</td>
+            <td *ngIf="round.correct; else elseBlock">
+              <mat-icon class="check">check</mat-icon>
+            </td>
+            <ng-template #elseBlock>
+              <td>
+                <mat-icon class="wrong">close</mat-icon>
+              </td>
+            </ng-template>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="button">
+      <button class="return-button" (click)="goToNewGame()">Go Back to Menu</button>
+    </div>
+  </div>
+</div>

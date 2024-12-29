@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +27,12 @@ export class GameService {
       .pipe(catchError(this.handleError));
   }
 
+  getAnimeSuggestions(): Observable<string[]> {
+	  return this.http.get('anime_names.txt', { responseType: 'text' }).pipe(
+		map((data) => data.split('\n').map((anime) => anime.trim()))
+	  );
+	}
+
 
   setGameData(data: any) {
     this.gameData = data;
@@ -36,6 +44,7 @@ export class GameService {
 
   public getRoundData(gameId: string, rounds: number):
     Observable<{
+      rounds: number;
       currentRound: number;
       score: number;
       anime: {
@@ -48,6 +57,7 @@ export class GameService {
     }> {
     return this.http
       .get<{
+        rounds: number;
         currentRound: number;
         score: number;
         anime: {
@@ -66,9 +76,16 @@ export class GameService {
 
   public sendAnswer(gameId: string, userAnswer: string): Observable<{ correct: boolean }> {
     const body = { gameId, userAnswer };
-    console.log('Sending answer:', body);
     return this.http
       .patch<{ correct: boolean }>(`${this.apiUrl}/answer`, body, {
+        withCredentials: true,
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  public askForGameDelete(gameId: string): Observable<{ message: string }> {
+    return this.http
+      .delete<{ message: string }>(`${this.apiUrl}/${gameId}`, {
         withCredentials: true,
       })
       .pipe(catchError(this.handleError));

@@ -37,7 +37,6 @@ export class NewGameComponent implements OnInit {
   public logout() {
     localStorage.removeItem('username');
     localStorage.removeItem('token');
-    console.log(localStorage.getItem('token'));
     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     this.router.navigate(['/login']);
   }
@@ -49,7 +48,8 @@ export class NewGameComponent implements OnInit {
         console.log('Game canceled');
         return;
       }
-      // StartGame from GameService
+      if (localStorage.getItem('roundsData'))
+        localStorage.removeItem('roundsData');
       this.gameService.startGame(result.rounds).subscribe(
         (data) => {
           this.gameService.setGameData(data);

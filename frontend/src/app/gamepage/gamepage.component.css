@@ -1,15 +1,15 @@
 main::before {
-	content: "";
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-image: url('../../assets/background-gamepage.jpg');
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-attachment: fixed;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('../../assets/background-gamepage.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   filter: blur(8px);
   -webkit-filter: blur(8px);
   z-index: -2;
@@ -84,8 +84,10 @@ main::before {
 form {
   display: flex;
   flex-direction: column;
-  align-items: center;  /* Center the form items */
-  width: 100%;  /* Optional: Adjust form width if needed */
+  align-items: center;
+  /* Center the form items */
+  width: 100%;
+  /* Optional: Adjust form width if needed */
 }
 
 .container {
@@ -112,7 +114,49 @@ h2 {
   margin-bottom: 2vh;
 }
 
-.video {
+.play-button-display {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 25vh;
+  aspect-ratio: 1/1;
+  background-color: rgb(69, 125, 142);
+  border: 0.6vw solid white;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+}
+
+.play-button-hidden {
+  display: none;
+}
+
+.not-hidden {
+  position: absolute;
+  user-select: none;
+  bottom: 20%;
+  left: 50%;
+  font-size: 2rem;
+  text-shadow:#000000 3px 3px 8px;
+  transform: translate(-50%, 0%);
+  color: white;
+}
+
+.hidden {
+  display: none;
+}
+
+.play-icon {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 7%;
+  left: 0%;
+  font-size: 20vh;
+}
+
+.video-cover {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -120,13 +164,26 @@ h2 {
   left: 0;
   bottom: 0;
   right: 0;
- /* filter: blur(50px);
-  --webkit-filter: blur(50px);*/
+  filter: blur(50px);
+  --webkit-filter: blur(50px);
+  pointer-events: none;
+}
+
+.video-uncover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  filter: blur(0px);
+  --webkit-filter: blur(0px);
 }
 
 .cover-section {
-  position:fixed;
-  top:20vh;
+  position: fixed;
+  top: 20vh;
   right: 0;
   flex-direction: column;
   align-items: right;
@@ -143,13 +200,20 @@ h2 {
 .cover {
   width: 15vw;
   filter: blur(30px);
-  -webkit-filter: blur(30px)
+  -webkit-filter: blur(30px);
+  pointer-events: none;
+}
+
+.uncover {
+  width: 15vw;
+  filter: blur(0px);
+  -webkit-filter: blur(0px);
 }
 
 .game-overview {
   padding-left: 3%;
-  position:fixed;
-  top:16vh;
+  position: fixed;
+  top: 16vh;
   flex-direction: column;
   align-items: left;
   justify-content: left;
@@ -181,11 +245,15 @@ table {
   position: relative;
   text-align: center;
 
-  td:not(:last-child),th:not(:last-child) {
+  td:not(:last-child),
+  th:not(:last-child) {
     border-right: 1px solid #16425B;
   }
 
-  td:first-child,th:first-child, td:last-child,th:last-child {
+  td:first-child,
+  th:first-child,
+  td:last-child,
+  th:last-child {
     width: 10%;
   }
 
@@ -193,14 +261,14 @@ table {
     padding-left: 8px;
     padding-right: 8px;
   }
-  
+
   thead tr {
     height: 60px;
     background: #16425B;
     font-size: 16px;
     color: #fff;
   }
-  
+
   tbody tr {
     border-bottom: 1px solid #16425B;
     height: 48px;
@@ -211,26 +279,28 @@ table {
 .input {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin-top: 2vh;
-  padding-left: 2%;
-  padding-right: 2%;
   width: 40vw;
   flex-grow: 1;
   color: #000000;
-  background-color: #fff;
   font-size: 18px;
   line-height: 2.4rem;
   border-radius: 5px;
   border-width: 100%;
   vertical-align: middle;
+  background-color: #f0f0f0;
   font-weight: bold;
-
 }
 
-.input::placeholder {
+input::placeholder {
   font-weight: normal;
 }
 
-button {
+
+.mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+button.submit-answer {
   position: relative;
   font: inherit;
   background-color: #f0f0f0;
@@ -273,6 +343,58 @@ button {
     background-color: transparent;
     transition: height 0.25s ease;
   }
+}
+
+
+button.next-round {
+  position: fixed;
+  right: 4vw;
+  bottom: 7vh;
+  font: inherit;
+  background-color: #f0f0f0;
+  border: 0;
+  color: #242424;
+  border-radius: 0.5em;
+  font-size: 3rem;
+  padding: 0.375em 1em;
+  margin-top: 2vh;
+  font-weight: 600;
+  text-shadow: 0 0.0625em 0 #fff;
+  box-shadow: inset 0 0.0625em 0 0 #f4f4f4, 0 0.0625em 0 0 #efefef,
+    0 0.125em 0 0 #ececec, 0 0.25em 0 0 #e0e0e0, 0 0.3125em 0 0 #dedede,
+    0 0.375em 0 0 #dcdcdc, 0 0.425em 0 0 #cacaca, 0 0.425em 0.5em 0 #cecece;
+  transition: 0.25s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  cursor: pointer;
+
+  &:active,
+  &:hover {
+    transform: translateY(0.225em);
+    box-shadow: inset 0 0.03em 0 0 #f4f4f4, 0 0.03em 0 0 #efefef,
+      0 0.0625em 0 0 #ececec, 0 0.125em 0 0 #e0e0e0, 0 0.125em 0 0 #dedede,
+      0 0.2em 0 0 #dcdcdc, 0 0.225em 0 0 #cacaca, 0 0.225em 0.375em 0 #cecece;
+
+    &:after {
+      height: calc(100% + 0.225em);
+    }
+  }
+
+  &:after {
+    position: absolute;
+    content: "";
+    display: block;
+    width: 100%;
+    height: calc(100% + 0.375em);
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    transition: height 0.25s ease;
+  }
+}
+
+button.next-round-hidden {
+  display: none;
 }
 
 .wrong {

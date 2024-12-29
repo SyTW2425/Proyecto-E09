@@ -1,23 +1,40 @@
 <main>
 	<div class="header">
 		<a href="/new_game"><mat-icon> arrow_back </mat-icon></a>
-		<a href="#default" class="logo">AniTrackGuess</a>
-		<div class="header-right">
-			<a class="active" href="#home">Home</a>
-			<a href="#contact">Contact</a>
-			<a href="#about">About</a>
-		</div>
+		<a href="/" class="logo">AniTrackGuess</a>
 	</div>
 	<div class="central-column">
-		<h1>Ronda: 0/X</h1>
-		<h2>¿Cuál es el nombre de este anime?</h2>
+		<h1>Round: {{currentRound}}/{{rounds}}</h1>
+		<h2>Guess this anime's name!</h2>
 		<div class="container">
-			<video autoplay name="media" class="video" [src]="videoUrl" frameborder="0" id="my_video" allow="encrypted-media">
+			<video name="media" [ngClass]="{'video-cover': cover, 'video-uncover': !cover}" [src]="videoUrl" frameborder="0" id="my_video" allow="encrypted-media">
 			</video>
+			<button [ngClass]="{'play-button-display': !started, 'play-button-hidden': started}" (click)="playPause()">
+				<mat-icon class="play-icon">play_arrow</mat-icon>
+			</button>
+			<div [ngClass]="{'not-hidden': !started, 'hidden': started}">Press to start the round!</div>
 		</div>
 		<form [formGroup]="animeForm" (ngSubmit)="onSubmit()">
-			<input class="input" name="text" type="text" autocomplete="off" placeholder="Insert this anime's name..."
-			formControlName="anime" />
+			<mat-form-field appearance="outline" class="input" subscriptSizing="dynamic">
+				<input
+				  matInput
+					class="input-form"
+				  formControlName="anime"
+				  [matAutocomplete]="auto"
+				  placeholder="Escribe un anime"
+				  (input)="filterAnimes($event)"
+				/>
+				<mat-autocomplete #auto="matAutocomplete">
+				  <mat-option
+					*ngFor="let suggestion of filteredSuggestions"
+					[value]="suggestion"
+					class="suggestion"
+					(click)="onSuggestionSelected(suggestion)"
+				  >
+					{{ suggestion }}
+				  </mat-option>
+				</mat-autocomplete>
+			  </mat-form-field>
 			<button class="submit-answer" type="submit">Submit Answer!</button>
 		</form>
 	</div>
@@ -25,7 +42,7 @@
 		<div class="cover-title">
 			<h2>Cover</h2>
 		</div>
-		<img class="cover" [src]="images[0]" alt="One Piece">
+		<img [ngClass]="{'cover': cover, 'uncover': !cover}" [src]="images[0]" alt="Cover" id="cover"/>
 	</div>
 	<div class="game-overview">
 		<h2>Overview</h2>
@@ -54,6 +71,10 @@
 				</tbody>
 			</table>
 		</div>
+		<div class="next-round-button">
+			<button [ngClass]="{'next-round-hidden': cover, 'next-round': !cover}" (click)="nextRound()">{{roundButtonLabel}}</button>
+		</div>
 	</div>
-
+	<app-review-game-popup *ngIf="showEndGamePopup">
+  </app-review-game-popup>
 </main>

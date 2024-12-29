@@ -90,7 +90,8 @@ export const getGameCurrentInfo = async (req, res) => {
     const currentInfo = {
       currentRound: game.currentRound,
       score: game.score,
-      anime: game.animes[game.currentRound - 1]
+      anime: game.animes[game.currentRound - 1],
+      rounds: game.rounds
     } 
     return res.status(200).json(currentInfo);
   }
