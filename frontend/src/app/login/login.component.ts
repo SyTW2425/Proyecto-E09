@@ -20,7 +20,7 @@ import { jwtDecode,  JwtPayload } from 'jwt-decode';
       <h2>SIGN IN</h2>
       <div class="input-field">
         <input type="text" formControlName="email" required>
-        <label>Enter your username</label>
+        <label>Enter your email</label>
         <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
           <small class="error">Email is required</small>
         </div>

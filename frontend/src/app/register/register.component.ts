@@ -3,6 +3,7 @@ import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angula
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../user.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-register',
@@ -92,11 +93,11 @@ export class RegisterFormComponent {
       const { email, username, password } = this.registerForm.value;
       this.authService.register(username, password, email).subscribe(
         (user) => {
-          console.log('Registration successful:', user);
           this.loading = false;
-          localStorage.setItem('token', user.token);
-          localStorage.setItem('username', username);
-          localStorage.setItem('email', email);
+          const decodedToken = jwtDecode<any>(user.token);
+          document.cookie = `token=${user.token}; path=/; expires=${new Date(decodedToken.exp * 1000).toUTCString()}`;
+          localStorage.setItem('username', decodedToken.publicData.username);
+          localStorage.setItem('email', decodedToken.publicData.email);
           this.router.navigate(['/new_game']);
         },
         (error) => {
