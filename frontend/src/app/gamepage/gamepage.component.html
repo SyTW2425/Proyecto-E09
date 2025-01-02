@@ -5,7 +5,12 @@
 	</div>
 	<div class="central-column">
 		<h1>Round: {{currentRound}}/{{rounds}}</h1>
-		<h2>Guess this anime's name!</h2>
+		<div [ngClass]="{'title-not-hidden': cover, 'title-hidden': !cover}">
+			<h2>Guess this anime's name!</h2>
+			</div>
+		<div [ngClass]="{'anime-name-right': !cover && correct, 'anime-name-wrong': !cover && !correct}">
+		{{animeName}}
+		</div>
 		<div class="container">
 			<video name="media" [ngClass]="{'video-cover': cover, 'video-uncover': !cover}" [src]="videoUrl" frameborder="0" id="my_video" allow="encrypted-media">
 			</video>

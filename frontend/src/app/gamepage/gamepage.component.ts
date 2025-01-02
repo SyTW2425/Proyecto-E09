@@ -23,6 +23,7 @@ export class GamepageComponent {
 	roundsData: { roundNumber: number; anime: string; correct: boolean }[] = [];
 	videoUrl: SafeResourceUrl = '';
 	anime: string = '';
+	animeName: string = '';
 	images: SafeResourceUrl[] = [];
 	timeStart: number = Math.floor(Math.random() * (70 - 15 + 1) + 15);
 	videoElement!: HTMLVideoElement; // Referencia al elemento de video
@@ -37,6 +38,7 @@ export class GamepageComponent {
 	allAnimes: string[] = [];  // Anime list for autocomplete
 	roundButtonLabel: string = 'Next Round';
 	showEndGamePopup: boolean = false;
+	correct: boolean = false;
 
 	private startRound() {
 		this.started = false;
@@ -172,6 +174,8 @@ export class GamepageComponent {
 		this.gameService.sendAnswer(this.gameId, anime).subscribe(
 			(data) => {
 				this.roundsData = this.llenarRoundsData(this.roundsData, this.anime, data.correct);
+				this.animeName = this.anime;
+				this.correct = data.correct;
 				if (this.currentRound === this.rounds) {
 					this.roundButtonLabel = 'Review Game';
 					this.endGame = true;
@@ -186,6 +190,7 @@ export class GamepageComponent {
 
 	nextRound() {
 		this.animeForm.reset();
+		this.animeName = '';
 		localStorage.setItem('roundsData', JSON.stringify(this.roundsData));
 		localStorage.setItem('gameId', this.gameId);
 		if (this.endGame)

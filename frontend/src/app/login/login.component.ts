@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { AuthService } from '../user.service';
-import { jwtDecode,  JwtPayload } from 'jwt-decode';
+import { AuthService } from '../auth.service';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 @Component({
   selector: 'app-login',
@@ -73,7 +73,7 @@ export class LoginFormComponent {
           this.router.navigate(['/new_game']);
         },
         (error) => {
-          console.error('Login error:', error); 
+          console.error('Login error:', error);
           alert('Invalid email or password');
         }
       );

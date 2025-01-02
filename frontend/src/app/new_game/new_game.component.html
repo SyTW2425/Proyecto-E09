@@ -12,35 +12,16 @@
         <a href="/new_game">
           <mat-icon>videogame_asset</mat-icon>New Game</a>
       </li>
-      <li>
-        <a href="/recent-games"><mat-icon>overview</mat-icon>Recent Games</a>
-      </li>
-      <li>
-        <a href="/stats"><mat-icon>monitoring</mat-icon>Stats</a>
-      </li>
       <h4>
         <span>Account</span>
         <div class="menu-separator"></div>
       </h4>
       <li>
-        <a href="/profile"><mat-icon>account_circle</mat-icon>Profile</a>
-      </li>
-      <li>
-        <a href="/settings"><mat-icon>settings</mat-icon>Settings</a>
-      </li>
-      <li>
         <a (click)="logout()"><mat-icon>logout</mat-icon>Logout</a>
       </li>
     </ul>
-    <div class="user-account">
-      <div class="user-profile">
-        <img src="images/profile-img.jpg" alt="Profile Image" />
-        <div class="user-detail">
-          <h3>{{userName}}</h3>
-          <span></span>
-        </div>
-      </div>
-    </div>
+    <h3 class="username">{{userName}}</h3>
+    <p class="level">Level: {{level}}</p>
   </aside>
 
   <!-- HTML !-->
@@ -53,16 +34,8 @@
   <app-solo-game-popup *ngIf="isPopupVisible" (gameConfigured)="handlePopupResult($event)">
   </app-solo-game-popup>
 
-  <button class="button-89 multi-game" role="button">
-    <mat-icon class="icon">groups</mat-icon>
-    <span class="text">Multiplayer Game</span>
-  </button>
-  <button class="button-89 quick-game" role="button">
+  <button class="button-89 quick-game" role="button" (click)="startQuickGame()">
     <mat-icon class="icon">bolt</mat-icon>
     <span class="text">Quick Game</span>
-  </button>
-  <button class="button-89 infinite-game" role="button">
-    <mat-icon class="icon">all_inclusive</mat-icon>
-    <span class="text">Infinite Game</span>
   </button>
 </main>

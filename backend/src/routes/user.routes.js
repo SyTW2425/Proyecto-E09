@@ -8,7 +8,12 @@ import { authJwt, validator } from '../middlewares/index.js';
 export const userRouter = Router();
 
 userRouter.get('/user', userController.getUser, async (req, res) => {
+  console.log(req.query);
   res.send('Get user route');
+});
+
+userRouter.get('/user/:username', userController.getUser, async (req, res) => {
+  res.send('Get user by username route');
 });
 
 userRouter.post('/user', [authJwt.verifyToken, authJwt.isAdmin, validator.checkDuplicateUsernameOrEmail, validator.checkRolesExisted],

@@ -79,40 +79,20 @@ main {
   border-radius: 4px;
 }
 
-.user-account {
-  margin-top: auto;
-  padding: 12px 10px;
-  margin-left: -10px;
-  background: #fff;
-  border-radius: 4px;
-}
 
-.user-profile {
-  display: flex;
-  align-items: center;
-  color: #161a2d;
-}
-
-.user-profile img {
-  width: 42px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-}
-
-.user-profile h3 {
-  font-size: 1rem;
+.username {
+  font-size: 1.5rem;
   font-weight: 600;
+  vertical-align: middle;
+  color: #fff;
 }
 
-.user-profile span {
-  font-size: 0.775rem;
-  font-weight: 600;
+.level{
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #ffffff;
 }
 
-.user-detail {
-  margin-left: 23px;
-  white-space: nowrap;
-}
 
 
 /* CSS */
@@ -129,10 +109,10 @@ main {
   transition: .3s linear, color 0s, background-color 0s;
   outline: var(--b) solid #00000000;
   outline-offset: .6em;
-  font-size: 45px;
+  font-size: 4em; 
   font-weight: bold;
   border: 0;
-  width: 40vh;
+  width: 50vh;
 
   user-select: none;
   -webkit-user-select: none;
@@ -147,31 +127,25 @@ main {
 }
 
 .solo-game {
-  position: absolute;
-  transform: translate(120%, 10%);
+  position: fixed;
+  top: 20%;
+  left: 25%;
 }
 
-.multi-game {
-  position: absolute;
-  transform: translate(300%, 10%);
-}
 
 .quick-game {
   position: absolute;
-  transform: translate(120%, 130%);
+  top: 20%;
+  left: 60%;
 }
 
-.infinite-game {
-  position: absolute;
-  transform: translate(300%, 130%);
-}
 
 .button-89 .mat-icon {
-  transform: scale(7);
+  transform: scale(9);
   margin-bottom: 40px;
   margin-top: 80px;
   color: #D9DCD6;
-}
+} 
 
 .button-89 .text {
   margin-top: 30px;

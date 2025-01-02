@@ -1,31 +1,43 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SoloGamePopupComponent } from '../solo_game_popup/solo-game-popup.component';
-import { MatIconModule } from '@angular/material/icon'; 
+import { MatIconModule } from '@angular/material/icon';
 import { GameService } from '../game.service';
 import { RouterModule, Router } from '@angular/router';
+import { UserService } from '../user.service';
 
 
 @Component({
   selector: 'app-new_game',
   templateUrl: './new_game.component.html',
   styleUrls: ['./new_game.component.css'],
-  imports: [CommonModule, MatIconModule, SoloGamePopupComponent, RouterModule], 
+  imports: [CommonModule, MatIconModule, SoloGamePopupComponent, RouterModule],
   standalone: true
 })
 export class NewGameComponent implements OnInit {
   userName!: string;
+  level: number = 1;
 
   constructor(
     private gameService: GameService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private userService: UserService,
+  ) { }
 
   ngOnInit() {
     if (!document.cookie.includes('token') || document.cookie.toString() === 'token=;') {
       this.router.navigate(['/login']);
     }
     this.userName = localStorage.getItem('username') || 'John Doe';
+    this.userService.getUser({username: this.userName, email: null, id: null}).subscribe(
+      (data) => {
+        this.level = data.level;
+      },
+      (error) => {
+        console.error('Error getting user:', error);
+      }
+    );
+
   }
 
   isPopupVisible = false;
@@ -60,5 +72,9 @@ export class NewGameComponent implements OnInit {
         }
       );
     }
+  }
+
+  startQuickGame() {
+    this.handlePopupResult({ rounds: 10 });
   }
 }

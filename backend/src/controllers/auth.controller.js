@@ -6,7 +6,6 @@ import cookieParser from 'cookie-parser';
 
 export const register = async (req, res) => {
   const { username, email, password, roles } = req.body;
-  console.log(req.body);
 
   if (!username || !email) {
     return res.status(400).json({ message: 'Username and email are required' });
@@ -53,7 +52,6 @@ export const register = async (req, res) => {
 }
 
 export const login = async (req, res) => {
-
   const userFound = await User.findOne({ email: req.body.email }).populate('roles');
   if (!userFound) return res.status(400).json({ message: 'User not found' });
 

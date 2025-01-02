@@ -114,6 +114,40 @@ h2 {
   margin-bottom: 2vh;
 }
 
+.title-not-hidden {
+  display: block;
+}
+
+.title-hidden {
+  display: none;
+}
+
+.anime-name-right {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  color: #127a1b;
+}
+
+.anime-name-wrong {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 2vh;
+  color: #ff0000;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 0;
+  content: " ";
+}
+
 .play-button-display {
   position: absolute;
   top: 45%;

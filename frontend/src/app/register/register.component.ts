@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { AuthService } from '../user.service';
+import { AuthService } from '../auth.service';
 import { jwtDecode } from 'jwt-decode';
 
 @Component({
@@ -84,10 +84,10 @@ export class RegisterFormComponent {
     const passwordConfirm = form.get('passwordConfirm').value;
     return password === passwordConfirm ? null : { mismatch: true };
   }
- 
+
   loading = false;
 
-  submitForm() {  
+  submitForm() {
     if (this.registerForm.valid) {
       this.loading = true;
       const { email, username, password } = this.registerForm.value;
