@@ -18,8 +18,8 @@ export class GameService {
    * @param rounds Número de rondas.
    * @returns Un Observable que emite el resultado del juego, que incluye el gameId.
    */
-  public startGame(rounds: number): Observable<{ gameId: string, rounds: number }> {
-    const body = { rounds };
+  public startGame(rounds: number, b_year?: number, f_year?: number): Observable<{ gameId: string, rounds: number }> {
+    const body = { rounds, b_year, f_year };
     return this.http
       .post<{ gameId: string, rounds: number }>(`${this.apiUrl}`, body, {
         withCredentials: true,

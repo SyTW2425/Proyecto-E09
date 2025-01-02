@@ -39,8 +39,10 @@ export class GamepageComponent {
 	roundButtonLabel: string = 'Next Round';
 	showEndGamePopup: boolean = false;
 	correct: boolean = false;
+	videoLoaded: boolean = false;
 
 	private startRound() {
+		this.videoLoaded = false;
 		this.started = false;
 		this.cover = true;
 		this.roundEnded = false;
@@ -63,20 +65,35 @@ export class GamepageComponent {
 				console.error('Error getting rounds:', error);
 			}
 		);
-
 		if (!this.videoElement) {
 			this.videoElement = document.getElementById('my_video') as HTMLVideoElement;
 		}
+		this.videoElement.addEventListener('loadeddata', () => {
+			this.videoLoaded = true; 
+		});
+
 		if (this.videoElement.duration - this.timeStart < 15) {
-			this.timeStart = this.videoElement.duration - 10;
+			this.timeStart = this.videoElement.duration - 15;
 		}
 		this.videoElement.addEventListener('play', () => {
-			// Detener el video después de 5 segundos
-			if (!this.roundEnded)
-				setTimeout(() => {
-					this.stopVideo();
-				}, 15000); // Cambia el valor según el tiempo que necesites
-		});
+			// Crear una referencia al temporizador
+			const timeoutId = setTimeout(() => {
+					// Verificar si la propiedad notPause es false antes de detener el video
+					if (!this.roundEnded) {
+							this.stopVideo();
+					}
+			}, 15000); // Cambia el valor según el tiempo que necesites
+	
+			// Escucha cambios en la propiedad notPause
+			const checkNotPause = () => {
+					if (this.roundEnded) {
+							clearTimeout(timeoutId); // Cancelar el temporizador si notPause es true
+							this.videoElement.removeEventListener('pause', checkNotPause);
+					}
+			};
+	
+			this.videoElement.addEventListener('pause', checkNotPause);
+	});
 	}
 
 	playPause() {
@@ -143,6 +160,16 @@ export class GamepageComponent {
 
 	ngAfterViewInit() {
 		this.videoElement = document.getElementById('my_video') as HTMLVideoElement;
+		const volumeSlider = document.getElementById('volume-slider') as HTMLInputElement;
+
+    // Configurar evento para el control de volumen
+    volumeSlider.addEventListener('input', (event) => {
+      const volume = parseFloat(volumeSlider.value);
+      this.videoElement.volume = volume;
+    });
+
+    // Inicializar volumen
+    volumeSlider.value = String(this.videoElement.volume);
 		this.startRound();
 	}
 
@@ -170,6 +197,7 @@ export class GamepageComponent {
 
 	onSubmit() {
 		const { anime } = this.animeForm.value;
+		if (anime === '') return;
 		this.animeForm.disable();
 		this.gameService.sendAnswer(this.gameId, anime).subscribe(
 			(data) => {
@@ -213,5 +241,16 @@ export class GamepageComponent {
 			correct: newCorrect
 		});
 		return roundsData;
+	}
+
+	deleteGame() {
+		this.gameService.askForGameDelete(this.gameId).subscribe(
+			(data) => {
+				console.log(data.message);
+			},
+			(error) => {
+				console.error('Error deleting game:', error);
+			}
+		);
 	}
 }

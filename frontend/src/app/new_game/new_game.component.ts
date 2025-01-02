@@ -17,6 +17,7 @@ import { UserService } from '../user.service';
 export class NewGameComponent implements OnInit {
   userName!: string;
   level: number = 1;
+  experience: number = 0;
 
   constructor(
     private gameService: GameService,
@@ -32,6 +33,7 @@ export class NewGameComponent implements OnInit {
     this.userService.getUser({username: this.userName, email: null, id: null}).subscribe(
       (data) => {
         this.level = data.level;
+        this.experience = data.experience;
       },
       (error) => {
         console.error('Error getting user:', error);
@@ -53,7 +55,7 @@ export class NewGameComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  handlePopupResult(result: { rounds: number; } | null) {
+  handlePopupResult(result: { rounds: number; b_year?: number; f_year?: number } | null) {
     this.isPopupVisible = false;
     if (result) {
       if (result.rounds === 0) {
@@ -62,7 +64,7 @@ export class NewGameComponent implements OnInit {
       }
       if (localStorage.getItem('roundsData'))
         localStorage.removeItem('roundsData');
-      this.gameService.startGame(result.rounds).subscribe(
+      this.gameService.startGame(result.rounds, result.b_year, result.f_year).subscribe(
         (data) => {
           this.gameService.setGameData(data);
           this.router.navigate(['/gamepage', data.gameId]);

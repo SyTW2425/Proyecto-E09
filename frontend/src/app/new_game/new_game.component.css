@@ -70,6 +70,7 @@ main {
   white-space: nowrap;
   padding: 15px 10px;
   text-decoration: none;
+  font-size: large;
   transition: 0.2s ease;
 }
 
@@ -81,14 +82,14 @@ main {
 
 
 .username {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 2rem;
+  font-weight: 500;
   vertical-align: middle;
   color: #fff;
 }
 
 .level{
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #ffffff;
 }

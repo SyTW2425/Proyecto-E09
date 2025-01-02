@@ -44,10 +44,6 @@ export class AuthService {
       .pipe(catchError(this.handleError));
   }
 
-
-
-
-
   /**
    * Manejo de errores centralizado.
    * @param error Objeto de error recibido.

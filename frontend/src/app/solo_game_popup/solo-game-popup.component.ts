@@ -11,8 +11,10 @@ import {GameService} from '../game.service';
 })
 export class SoloGamePopupComponent {
   @Input() categories: string[] = [];
-  @Output() gameConfigured = new EventEmitter<{ rounds: number; }>();
+  @Output() gameConfigured = new EventEmitter<{ rounds: number; b_year?: number; f_year?: number }>();
   rounds: number = 1;
+  b_year?: number; // Beginning year Optional
+  f_year?: number; // Final year Optional
 
   constructor(private gameService: GameService) {}
 
@@ -25,6 +27,10 @@ export class SoloGamePopupComponent {
       alert('You can\'t play more than 100 rounds');
       return;
     }
-    this.gameConfigured.emit({ rounds: this.rounds});
+    if (this.b_year && this.f_year && this.b_year > this.f_year) {
+      alert('The beginning year must be less than the final year');
+      return;
+    }
+    this.gameConfigured.emit({ rounds: this.rounds, b_year: this.b_year, f_year: this.f_year });
   }
 }

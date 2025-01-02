@@ -23,19 +23,27 @@ function getRelevantInfo(animethemes) {
 
 export const createGame = async (req, res) => {
   try {
-    const { rounds } = req.body; //year, season, media_format
+    const { rounds, b_year, f_year } = req.body;
     if (!rounds) return res.status(400).send({ message: 'Rounds is required' });
+    
     const url = 'https://api.animethemes.moe/animetheme';
     const params = {
       'page[size]': rounds,
       'page[number]': 1,
       'filter[has]': 'anime,animethemeentries',
       'filter[spoiler]': false,
+      'filter[nsfw]': false,
       'filter[type]': 'OP',
       'filter[anime][media_format]': 'TV',
       sort: 'random',
       include: 'group,anime.images,song.artists,animethemeentries.videos.audio',
     };
+    if (b_year) {
+      params['filter[year-gte]'] = b_year;
+    }
+    if (f_year) {
+      params['filter[year-lte]'] = f_year;
+    }
     const response = await axios.get(url, { params });
     const animethemes = response.data;
     const relevantInfo = getRelevantInfo(animethemes.animethemes);
