@@ -25,7 +25,6 @@ export const deleteById = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
 		const { id, username, email } = req.query; // Get query parameters
-    console.log(req.query);
 		if (req.query.password) {
 			return res.status(404).send({ message: 'Cannot get user by password' });
 		}
