@@ -38,12 +38,11 @@ export const createGame = async (req, res) => {
       sort: 'random',
       include: 'group,anime.images,song.artists,animethemeentries.videos.audio',
     };
-    if (b_year) {
-      params['filter[year-gte]'] = b_year;
-    }
-    if (f_year) {
-      params['filter[year-lte]'] = f_year;
-    }
+
+    if (b_year) params['filter[year-gte]'] = b_year;
+    if (f_year) params['filter[year-lte]'] = f_year;
+    if ((b_year && f_year) && (b_year > f_year)) return res.status(400).send({ message: 'Invalid years range' });
+
     const response = await axios.get(url, { params });
     const animethemes = response.data;
     const relevantInfo = getRelevantInfo(animethemes.animethemes);
@@ -72,7 +71,7 @@ export const checkAnswer = async (req, res) => {
 
     // Validación secundaria usando similitud de cadenas
     const similarity = stringSimilarity.compareTwoStrings(userAnswer.toLowerCase(), correctAnswer.toLowerCase());
-    const isSimilar = similarity > 0.85; // Umbral de 85% de similitud
+    const isSimilar = similarity > 0.80; // Umbral de 80% de similitud
 
     const correct = isCorrect || isSimilar ? true : false;
     if (correct) {

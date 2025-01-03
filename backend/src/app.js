@@ -31,7 +31,7 @@ app.use('/game', gameRouter);
 const server = http.createServer(app);
 
 export const startServer = async () => {
-			if (process.env.NODE_ENV !== 'test') {
+	if (process.env.NODE_ENV !== 'test') {
 		await connectDB();
 		const port = process.env.PORT || 3000;
 		server.listen(port, () => {

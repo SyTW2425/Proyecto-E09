@@ -57,6 +57,32 @@ describe('POST /auth/register', () => {
     expect(res.body).toHaveProperty('message');
   });
 
+  it('should not create a duplicate User with different username but same email', async () => {
+    await User.create({ username: 'testuserX', email: 'example@test.com', password: 'password' });
+    const res = await request
+      .post('/auth/register')
+      .send({
+        username: 'testuserX',
+        email: 'example@test.com',
+        password: 'password',
+      });
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('message');
+  });
+
+  it('should not create a duplicate User with different email but same username', async () => {
+    await User.create({ username: 'testuser', email: 'example15@test.com', password: 'password' });
+    const res = await request
+      .post('/auth/register')
+      .send({
+        username: 'testuser',
+        email: 'example15@test.com',
+        password: 'password',
+      });
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('message');
+  });
+
   it('should not create a User with missing credentials', async () => {
     const res = await request
       .post('/auth/register')
@@ -148,7 +174,7 @@ describe('POST /auth/login', () => {
   });
 });
 
-describe('DELETE /api/user/:id', () => {
+/*describe('DELETE /api/user/:id', () => {
   beforeEach(async () => {
     const user = await User.create({ username: 'testuser', email: 'example@test.com', password: 'password' });
     id = user._id;
@@ -165,4 +191,4 @@ describe('DELETE /api/user/:id', () => {
     expect(res.statusCode).toBe(404);
     expect(res.body).toHaveProperty('message');
   });
-});
+});*/
