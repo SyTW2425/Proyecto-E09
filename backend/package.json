@@ -4,7 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "NODE_ENV=test jest --coverage && echo | coveralls",
+    "test": "NODE_ENV=test jest",
+    "coverage": "NODE_ENV=test jest --coverage && echo | coveralls",
     "start": "node src/app.js"
   },
   "repository": {
