@@ -1,5 +1,5 @@
 # Paso 1: Usa una imagen base de Node.js
-FROM node:18 AS build
+FROM node:18-alpine AS build
 
 # Establece el directorio de trabajo
 WORKDIR /app
