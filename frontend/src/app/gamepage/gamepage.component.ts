@@ -8,6 +8,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ReviewGamePopupComponent } from '../review_game_popup/review-game-popup.component';
+import { animeNames } from '../anime_names';
 
 @Component({
 	selector: 'gamepage',
@@ -26,7 +27,7 @@ export class GamepageComponent {
 	animeName: string = '';
 	images: SafeResourceUrl[] = [];
 	timeStart: number = Math.floor(Math.random() * (70 - 15 + 1) + 15);
-	videoElement!: HTMLVideoElement; // Referencia al elemento de video
+	videoElement!: HTMLVideoElement | null; // Referencia al elemento de video
 	animeForm: FormGroup;
 	currentRound: number = 1;
 	cover: boolean = true;
@@ -40,6 +41,7 @@ export class GamepageComponent {
 	showEndGamePopup: boolean = false;
 	correct: boolean = false;
 	videoLoaded: boolean = false;
+	isSubmitting: boolean = false; // Flag to disable the submit button while the answer is being sent
 
 	private startRound() {
 		this.videoLoaded = false;
@@ -88,20 +90,20 @@ export class GamepageComponent {
 			const checkNotPause = () => {
 					if (this.roundEnded) {
 							clearTimeout(timeoutId); // Cancelar el temporizador si notPause es true
-							this.videoElement.removeEventListener('pause', checkNotPause);
+							this.videoElement!.removeEventListener('pause', checkNotPause);
 					}
 			};
 	
-			this.videoElement.addEventListener('pause', checkNotPause);
+			this.videoElement!.addEventListener('pause', checkNotPause);
 	});
 	}
 
 	playPause() {
 		this.started = true;
 		this.animeForm.enable();
-		if (this.videoElement.paused) {
-			this.videoElement.play();
-			this.currentTime = this.videoElement.currentTime;
+		if (this.videoElement!.paused) {
+			this.videoElement!.play();
+			this.currentTime = this.videoElement!.currentTime;
 		}
 	}
 
@@ -123,14 +125,7 @@ export class GamepageComponent {
 		});
 
 		this.animeForm.disable();
-		this.gameService.getAnimeSuggestions().subscribe(
-			(data) => {
-				this.allAnimes = data; // data es un array de strings
-			},
-			(error) => {
-				console.error('Error loading anime suggestions:', error);
-			}
-		);
+		this.allAnimes = animeNames;
 	}
 
 	public filterAnimes(event: Event): void {
@@ -153,9 +148,6 @@ export class GamepageComponent {
 		if (!document.cookie.includes('token') || document.cookie.toString() === 'token=;') {
 			this.router.navigate(['/login']);
 		}
-		this.gameService.getAnimeSuggestions().subscribe((animes: string[]) => {
-			this.allAnimes = animes;
-		});
 	}
 
 	ngAfterViewInit() {
@@ -165,7 +157,7 @@ export class GamepageComponent {
     // Configurar evento para el control de volumen
     volumeSlider.addEventListener('input', (event) => {
       const volume = parseFloat(volumeSlider.value);
-      this.videoElement.volume = volume;
+      this.videoElement!.volume = volume;
     });
 
     // Inicializar volumen
@@ -179,9 +171,9 @@ export class GamepageComponent {
 			this.videoElement.pause();
 			this.videoElement.addEventListener('play', (event) => {
 				if (!this.roundEnded && cRound === this.currentRound) {
-					this.videoElement.pause();
+					this.videoElement!.pause();
 				} else {
-					this.videoElement.play();
+					this.videoElement!.play();
 				}
 			});
 		}
@@ -190,14 +182,20 @@ export class GamepageComponent {
 	public showAnswer(correct: boolean) {
 		this.cover = false;
 		this.roundEnded = true;
-		this.videoElement.currentTime = this.timeStart;
-		this.videoElement.play();
-		this.videoElement.controls = true;
+		this.videoElement!.currentTime = this.timeStart;
+		this.videoElement!.play();
+		this.videoElement!.controls = true;
 	}
 
 	onSubmit() {
+		if (this.isSubmitting) return;
+		this.isSubmitting = true; // Disable the submit button
+
 		const { anime } = this.animeForm.value;
-		if (anime === '') return;
+		if (anime === '') {
+			this.isSubmitting = false; // Enable the submit button
+			return;
+		}
 		this.animeForm.disable();
 		this.gameService.sendAnswer(this.gameId, anime).subscribe(
 			(data) => {
@@ -210,9 +208,11 @@ export class GamepageComponent {
 					localStorage.setItem('roundsData', JSON.stringify(this.roundsData));
 				}
 				this.showAnswer(data.correct);
+				this.isSubmitting = false; // Enable the submit button
 			},
 			(error) => {
 				console.error('Error sending answer:', error);
+				this.isSubmitting = false; // Enable the submit button
 			})
 	}
 
@@ -221,6 +221,7 @@ export class GamepageComponent {
 		this.animeName = '';
 		localStorage.setItem('roundsData', JSON.stringify(this.roundsData));
 		localStorage.setItem('gameId', this.gameId);
+		this.videoElement = null;
 		if (this.endGame)
 			this.showEndGamePopup = true;
 		else

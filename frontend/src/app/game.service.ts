@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { map } from 'rxjs/operators';
 import { environment } from '../environments/environment';
+import { animeNames } from './anime_names';
 
 @Injectable({
   providedIn: 'root',
@@ -26,13 +27,6 @@ export class GameService {
       })
       .pipe(catchError(this.handleError));
   }
-
-  getAnimeSuggestions(): Observable<string[]> {
-	  return this.http.get('anime_names.txt', { responseType: 'text' }).pipe(
-		map((data) => data.split('\n').map((anime) => anime.trim()))
-	  );
-	}
-
 
   setGameData(data: any) {
     this.gameData = data;

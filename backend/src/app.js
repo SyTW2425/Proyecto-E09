@@ -8,7 +8,7 @@ import './db/mongoose.js';
 import authRouter from './routes/auth.routes.js';
 import userRouter from './routes/user.routes.js';
 import gameRouter from './routes/game.routes.js';
-import { createRoles } from './libs/initialSetup.js';
+import { createRoles, createAdminUser } from './libs/initialSetup.js';
 import { connectDB, closeDB } from './db/mongoose.js';
 
 export const app = express();
@@ -38,6 +38,7 @@ export const startServer = async () => {
 		});
 	}
 	await createRoles();
+	if (process.env.NODE_ENV !== 'test') await createAdminUser();
 	return server;
 };
 

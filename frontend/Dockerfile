@@ -1,5 +1,5 @@
 # Paso 1: Usa una imagen de Node para construir la aplicación
-FROM node:18 AS build
+FROM node:18-alpine AS build
 
 # Configura el directorio de trabajo
 WORKDIR /app

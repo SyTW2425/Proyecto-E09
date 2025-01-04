@@ -23,16 +23,29 @@ def fetch_all_anime_names(api_url, output_file):
             break
 
     # Store the anime names in a file .txt
-    try:
+    '''try:
         with open(output_file, "w", encoding="utf-8") as file:
             for name in anime_names:
                 file.write(name + "\n")
-        print(f"Se guardaron {len(anime_names)} nombres en '{output_file}'.")
+        print(f"It saved {len(anime_names)} names in '{output_file}'.")
     except IOError as e:
-        print(f"Error al guardar el archivo: {e}")
+        print(f"Error al guardar el archivo: {e}")'''
+    
+    # Store the anime names in a file .ts for Angular in an array
+    try:
+        with open(output_file_array, "w", encoding="utf-8") as file:
+            file.write("export const animeNames = [\n")
+            for name in anime_names:
+                escaped_name = name.replace("\"", "\\\"").replace("'", "\\'")
+                file.write(f"  \'{escaped_name}\',\n")
+            file.write("];\n")
+            print(f"It saved {len(anime_names)} names in '{output_file_array}' as a string array.")
+    except IOError as e:
+        print(f"Error saving file: {e}")
 
 # Starter URL and output file
 api_url = "https://api.animethemes.moe/anime?fields%5Banime%5D=name&page%5Bsize%5D=100&page%5Bnumber%5D=1"
-output_file = "anime_names.txt"
+#output_file = "anime_names.txt"
+output_file_array = "anime_names.ts"
 
-fetch_all_anime_names(api_url, output_file)
+fetch_all_anime_names(api_url, output_file_array)

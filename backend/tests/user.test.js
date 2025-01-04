@@ -178,3 +178,85 @@ describe('PATCH /user', () => {
     expect(res.body).toHaveProperty('message', 'User not found');
   });
 });
+
+describe('GET /api/user', () => {
+  let user, id;
+  beforeEach(async () => {
+    user = await request
+      .post('/api/user')
+      .set('x-access-token', token)
+      .send({
+        username: 'testuserx',
+        email: 'example@test.com',
+        password: 'password123',
+      });
+    if (user.statusCode === 201)
+      id = user.body.user._id;
+  });
+
+  it('should get a User by username', async () => {
+    const res = await request.get('/api/user?username=testuserx').set('x-access-token', token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('username');
+    expect(res.body).toHaveProperty('email');
+    expect(res.body).toHaveProperty('_id');
+  });
+
+  it('should get a User by email', async () => {
+    const res = await request.get('/api/user?email=example@test.com').set('x-access-token', token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('username');
+    expect(res.body).toHaveProperty('email');
+    expect(res.body).toHaveProperty('_id');
+  });
+
+  it('should get a User by id', async () => {
+    const res = await request.get(`/api/user?id=${id}`).set('x-access-token', token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('username');
+    expect(res.body).toHaveProperty('email');
+    expect(res.body).toHaveProperty('_id');
+  });
+
+  it('should not get a User by password', async () => {
+    const res = await request.get('/api/user?password=password').set('x-access-token', token);
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message');
+  });
+
+  it('should not get a User by non-existent username', async () => {
+    const res = await request.get('/api/user?username=johndoe').set('x-access-token', token);
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message');
+  });
+
+  it('should not get a User by non-existent email', async () => {
+    const res = await request.get('/api/user?email=wrong_example@test.com').set('x-access-token', token);
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message');
+  });
+
+  it('should not get a User by non-existent id', async () => {
+    const res = await request.get(`/api/user?id=673b6343562a1a5a6a52d86a`).set('x-access-token', token);
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message');
+  });
+
+  it('should get all Users', async () => {
+    const res = await request.get('/api/user').set('x-access-token', token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toBeInstanceOf(Array);
+  });
+
+  it('should return 403 without token', async () => {
+    const res = await request.get('/api/user');
+    expect(res.statusCode).toBe(403);
+    expect(res.body).toHaveProperty('message', 'No token provided');
+  });
+
+  it('should return 401 without admin role', async () => {
+    const res = await request.get('/api/user').set('x-access-token', 'invalidtoken'); // Example random token
+    expect(res.statusCode).toBe(401);
+    expect(res.body).toHaveProperty('message', 'Unauthorized');
+  });
+});

@@ -38,7 +38,7 @@
 					</mat-option>
 				</mat-autocomplete>
 			</mat-form-field>
-			<button class="submit-answer" type="submit" [disabled]="!videoLoaded">Submit Answer!</button>
+			<button class="submit-answer" type="submit" [disabled]="!videoLoaded || !cover || !started || roundEnded || isSubmitting">Submit Answer!</button>
 		</form>
 	</div>
 	<div class="cover-section">

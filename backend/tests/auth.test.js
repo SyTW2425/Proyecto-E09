@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 import supertest from 'supertest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { app, startServer } from '../src/app.js'; // Asegúrate de exportar `app` correctamente desde tu app
-import User from '../src/models/user.js'; // Asegúrate de exportar el modelo `User` correctamente
-import Role from '../src/models/role.js'; // Asegúrate de exportar el modelo `User` correctamente
+import { app, startServer } from '../src/app.js';
+import User from '../src/models/user.js'; 
+import Role from '../src/models/role.js'; 
 
 const request = supertest(app);
 let mongoServer;
@@ -11,12 +11,12 @@ let id;
 let registerToken;
 let loginToken;
 
-// Configurar MongoDB Memory Server
+// Configure a new in-memory database
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
   await mongoose.connect(uri);
-	startServer();
+  startServer();
 });
 
 afterAll(async () => {
@@ -25,7 +25,7 @@ afterAll(async () => {
   await mongoServer.stop();
 });
 
-// Limpiar la base de datos después de cada prueba
+// Clean DB between tests
 afterEach(async () => {
  await mongoose.connection.db.dropDatabase();
 });
@@ -121,67 +121,6 @@ describe('POST /auth/register', () => {
   });
 });
 
-describe('GET /api/user', () => {
-  beforeEach(async () => {
-    const user = await User.create({ username: 'testuser', email: 'example@test.com', password: 'password' });
-    id = user._id;
-  });
-
-  it('should get a User by username', async () => {
-    const res = await request.get('/api/user?username=testuser');
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('username');
-    expect(res.body).toHaveProperty('email');
-    expect(res.body).toHaveProperty('_id');
-  });
-
-  it('should get a User by email', async () => {
-    const res = await request.get('/api/user?email=example@test.com');
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('username');
-    expect(res.body).toHaveProperty('email');
-    expect(res.body).toHaveProperty('_id');
-  });
-
-  it('should get a User by id', async () => {
-    const res = await request.get(`/api/user?id=${id}`);
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('username');
-    expect(res.body).toHaveProperty('email');
-    expect(res.body).toHaveProperty('_id');
-  });
-
-  it('should not get a User by password', async () => {
-    const res = await request.get('/api/user?password=password');
-    expect(res.statusCode).toBe(404);
-    expect(res.body).toHaveProperty('message');
-  });
-
-  it('should not get a User by non-existent username', async () => {
-    const res = await request.get('/api/user?username=johndoe');
-    expect(res.statusCode).toBe(404);
-    expect(res.body).toHaveProperty('message');
-  });
-
-  it('should not get a User by non-existent email', async () => {
-    const res = await request.get('/api/user?email=wrong_example@test.com');
-    expect(res.statusCode).toBe(404);
-    expect(res.body).toHaveProperty('message');
-  });
-
-  it('should not get a User by non-existent id', async () => {
-    const res = await request.get(`/api/user?id=673b6343562a1a5a6a52d86a`);
-    expect(res.statusCode).toBe(404);
-    expect(res.body).toHaveProperty('message');
-  });
-
-  it('should get all Users', async () => {
-    const res = await request.get('/api/user');
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toBeInstanceOf(Array);
-  });
-});
-
 describe('POST /auth/login', () => {
   beforeEach(async () => {
 		const password = await User.encryptPassword('password');
@@ -222,22 +161,3 @@ describe('POST /auth/login', () => {
     expect(res.body).toHaveProperty('message');
   });
 });
-
-/*describe('DELETE /api/user/:id', () => {
-  beforeEach(async () => {
-    const user = await User.create({ username: 'testuser', email: 'example@test.com', password: 'password' });
-    id = user._id;
-  });
-
-  it('should delete a User', async () => {
-    const res = await request.delete(`/api/user/${id}`);
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('message');
-  });
-
-  it('should not delete a User that does not exist', async () => {
-		const res = await request.delete(`/api/user/${new mongoose.Types.ObjectId()}`);
-    expect(res.statusCode).toBe(404);
-    expect(res.body).toHaveProperty('message');
-  });
-});*/

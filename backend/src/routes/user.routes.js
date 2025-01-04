@@ -7,10 +7,10 @@ import { authJwt, validator } from '../middlewares/index.js';
 
 export const userRouter = Router();
 
-userRouter.get('/user', userController.getUser, async (req, res) => {
+userRouter.get('/user', [authJwt.verifyToken, authJwt.isAdmin], userController.getUser, async (req, res) => {
 });
 
-userRouter.get('/user/:username', userController.getUser, async (req, res) => {
+userRouter.get('/user/:username', [authJwt.verifyToken, authJwt.isModerator], userController.getUser, async (req, res) => {
 });
 
 userRouter.post('/user', [authJwt.verifyToken, authJwt.isAdmin, validator.checkDuplicateUsernameOrEmail, validator.checkRolesExisted],
