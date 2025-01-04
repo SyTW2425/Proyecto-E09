@@ -46,10 +46,11 @@ jobs:
         node-version: 16.x
 
     - name: npm install, make test-coverage
+      working-directory: ./backend
       run: |
         npm install
-        make test-coverage
-
+        npm run coverage
+        1
     - name: Coveralls
       uses: coverallsapp/github-action@v2
 
