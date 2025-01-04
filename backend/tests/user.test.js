@@ -46,10 +46,6 @@ afterAll(async () => {
   await mongoServer.stop();
 });
 
-// Limpieza después de cada test
-afterEach(async () => {
-  await mongoose.connection.db.dropDatabase();
-});
 
 describe('POST /user', () => {
   it('should create a new user', async () => {
@@ -61,7 +57,6 @@ describe('POST /user', () => {
         email: 'test@example.com',
         password: 'password123',
       });
-
     expect(res.statusCode).toBe(201);
     expect(res.body).toHaveProperty('message', 'User created successfully');
   });
@@ -81,41 +76,48 @@ describe('POST /user', () => {
 });
 
 describe('DELETE /user/:id', () => {
-  let user;
+  let user, id;
 
   beforeEach(async () => {
-    user = await User.create({
-      username: 'deleteuser',
-      email: 'delete@example.com',
-      password: await User.encryptPassword('password123'),
-    });
+    user = await request
+      .post('/api/user')
+      .set('x-access-token', token)
+      .send({
+        username: 'deleteuser',
+        email: 'delete@example.com',
+        password: 'password123',
+      });
+    id = user.body.user._id;
   });
 
   it('should delete a user', async () => {
     const res = await request
-      .delete(`/api/user/${user._id}`)
+      .delete(`/api/user/${id}`)
       .set('x-access-token', token);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('message', 'User deleted successfully');
+    expect(res.body).toHaveProperty('message', `User with ID ${id} deleted`);
   });
-
   it('should return 403 without token', async () => {
-    const res = await request.delete(`/api/user/${user._id}`);
+    const res = await request.delete(`/api/user/${id}`);
     expect(res.statusCode).toBe(403);
     expect(res.body).toHaveProperty('message', 'No token provided');
   });
 });
 
 describe('PATCH /user', () => {
-  let user;
+  let user, id;
 
   beforeEach(async () => {
-    user = await User.create({
-      username: 'updateuser',
-      email: 'update@example.com',
-      password: await User.encryptPassword('password123'),
-    });
+    user = await request
+      .post('/api/user')
+      .set('x-access-token', token)
+      .send({
+        username: 'updateuser',
+        email: 'update@example.com',
+        password: 'password123',
+      });
+    id = user.body.user._id;
   });
 
   it('should update a user', async () => {
@@ -123,7 +125,7 @@ describe('PATCH /user', () => {
       .patch('/api/user')
       .set('x-access-token', token)
       .send({
-        id: user._id,
+        id: id,
         username: 'updateduser',
         email: 'updated@example.com',
       });
@@ -133,8 +135,8 @@ describe('PATCH /user', () => {
   });
 
   it('should return 403 without token', async () => {
-    const res = await request.patch('/user').send({
-      id: user._id,
+    const res = await request.patch('/api/user').send({
+      id: id,
       username: 'unauthorizedupdate',
     });
 

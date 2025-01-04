@@ -24,7 +24,7 @@ userRouter.delete('/user/:id', [authJwt.verifyToken, authJwt.isAdmin], userContr
   res.send(`User with ID ${req.params.id} deleted`);
 });
 
-userRouter.patch('/user', [[authJwt.verifyToken, authJwt.isModerator, validator.checkDuplicateUsernameOrEmail, validator.checkRolesExisted]], 
+userRouter.patch('/user', [authJwt.verifyToken, authJwt.isModerator, validator.checkDuplicateUsernameOrEmail, validator.checkRolesExisted], 
   userController.updateUser, async (req, res) => {
   res.send('Update user route');
 });

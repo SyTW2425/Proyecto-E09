@@ -64,7 +64,7 @@ export const getUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { id, username, email } = req.query;
+    const { id, username, email } = req.body;
 
     let filter = null;
     // Determine the filter to use
