@@ -76,7 +76,7 @@ jobs:
 
       - name: Build and push backend Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest -f ./backend/Dockerfile ./backend --build-arg SECRET=${{ env.SECRET }} --build-arg CORS_ORIGIN=${{ secrets.CORS_ORIGIN }} --build-arg ATLAS_URI=${{ secrets.ATLAS_URI }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest -f ./backend/Dockerfile ./backend
           docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
 
   docker-build-frontend:
