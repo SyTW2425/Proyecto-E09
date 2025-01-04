@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "NODE_ENV=test jest",
-    "coverage": "NODE_ENV=test c8 jest",
+    "coverage": "NODE_ENV=test jest --coverage",
     "start": "node src/app.js"
   },
   "repository": {
