@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/auth' // URL para desarrollo
+  apiUrl: 'http://localhost:3000' // URL para desarrollo
 };
