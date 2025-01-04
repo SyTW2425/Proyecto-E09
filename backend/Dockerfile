@@ -14,6 +14,12 @@ RUN npm install
 # Copia todo el código fuente del backend al contenedor
 COPY . .
 
+ENV SECRET=$SECRET
+
+ENV CORS_ORIGIN=$CORS_ORIGIN
+
+ENV ATLAS_URI=$ATLAS_URI
+
 # Exponer el puerto que la aplicación va a usar (por ejemplo, el 3000)
 EXPOSE 3000
 
