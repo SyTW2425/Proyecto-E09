@@ -6,25 +6,14 @@ import cookieParser from 'cookie-parser';
 
 export const register = async (req, res) => {
   const { username, email, password, roles } = req.body;
-
   if (!username || !email) {
     return res.status(400).json({ message: 'Username and email are required' });
   } else if (!password) {
     return res.status(400).json({ message: 'Password is required' });
   }
-
+  
   const newUser = new User({ username, email, password: await User.encryptPassword(password) });
   
-  const existingUserByUsername = await User.findOne({ username });
-  if (existingUserByUsername) {
-    return res.status(400).json({ message: 'Username already exists' });
-  }
-
-  const existingUserByEmail = await User.findOne({ email });
-  if (existingUserByEmail) {
-    return res.status(400).json({ message: 'Email already exists' });
-  }
-
   if (roles) {
     const foundRoles = await Role.find({ name: { $in: roles } });
     newUser.roles = foundRoles.map(role => role._id);
@@ -43,10 +32,6 @@ export const register = async (req, res) => {
  jwt.sign({ id: user._id, publicData: publicData }, process.env.SECRET, {
     expiresIn: 86400 // 24 hours
   }, (error, token) => {
-    if (error) {
-      console.error(error.message);
-      return res.sendStatus(500);
-    }
     res.status(201).json({ token });
   });
 }

@@ -6,12 +6,10 @@ import { authJwt, validator } from '../middlewares/index.js';
 export const authRouter = Router();
 
 authRouter.post('/login', authController.login, (req, res) => {
-    res.send('Login route');
     }
 );
 
 authRouter.post('/register', [validator.checkDuplicateUsernameOrEmail, validator.checkRolesExisted], authController.register, (req, res) => {
-    res.send('Register route');
     }
 );
 

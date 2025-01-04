@@ -36,7 +36,7 @@ jobs:
       run: npm run test
 
   coverage:
-    name: Install Dependencies and run Coverage
+    name: Coverage with Coveralls
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

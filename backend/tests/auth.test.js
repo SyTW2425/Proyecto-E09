@@ -44,25 +44,12 @@ describe('POST /auth/register', () => {
     registerToken = res.body.token;
   });
 
-  it('should not create a duplicate User', async () => {
-    await User.create({ username: 'testuser', email: 'example@test.com', password: 'password' });
-    const res = await request
-      .post('/auth/register')
-      .send({
-        username: 'testuser',
-        email: 'example@test.com',
-        password: 'password',
-      });
-    expect(res.statusCode).toBe(400);
-    expect(res.body).toHaveProperty('message');
-  });
-
   it('should not create a duplicate User with different username but same email', async () => {
     await User.create({ username: 'testuserX', email: 'example@test.com', password: 'password' });
     const res = await request
       .post('/auth/register')
       .send({
-        username: 'testuserX',
+        username: 'testuser24',
         email: 'example@test.com',
         password: 'password',
       });
@@ -71,13 +58,39 @@ describe('POST /auth/register', () => {
   });
 
   it('should not create a duplicate User with different email but same username', async () => {
-    await User.create({ username: 'testuser', email: 'example15@test.com', password: 'password' });
+    await User.create({ username: 'testuser15', email: 'example15@test.com', password: 'password' });
+    const res = await request
+      .post('/auth/register')
+      .send({
+        username: 'testuser15',
+        email: 'example16@test.com',
+        password: 'password',
+      });
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('message');
+  });
+
+  it ('roles can be assigned to a User', async () => {
     const res = await request
       .post('/auth/register')
       .send({
         username: 'testuser',
-        email: 'example15@test.com',
+        email: 'new@user.com',
         password: 'password',
+        roles: ['admin'],
+      });
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty('token');
+  });
+
+  it('cannot assign a role that does not exist', async () => {
+    const res = await request
+      .post('/auth/register')
+      .send({
+        username: 'testuser',
+        email: 'a@c.com',
+        password: 'password',
+        roles: ['superadmin'],
       });
     expect(res.statusCode).toBe(400);
     expect(res.body).toHaveProperty('message');
@@ -90,6 +103,18 @@ describe('POST /auth/register', () => {
         username: 'testuser',
         email: 'example2@user.com',
         password: '',
+      });
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('message');
+  });
+
+  it('should not create a User without email and username', async () => {
+    const res = await request
+      .post('/auth/register')
+      .send({
+        email: '',
+        password: 'password',
+        username: '',
       });
     expect(res.statusCode).toBe(400);
     expect(res.body).toHaveProperty('message');
@@ -130,6 +155,30 @@ describe('GET /api/user', () => {
     const res = await request.get('/api/user?password=password');
     expect(res.statusCode).toBe(404);
     expect(res.body).toHaveProperty('message');
+  });
+
+  it('should not get a User by non-existent username', async () => {
+    const res = await request.get('/api/user?username=johndoe');
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message');
+  });
+
+  it('should not get a User by non-existent email', async () => {
+    const res = await request.get('/api/user?email=wrong_example@test.com');
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message');
+  });
+
+  it('should not get a User by non-existent id', async () => {
+    const res = await request.get(`/api/user?id=673b6343562a1a5a6a52d86a`);
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message');
+  });
+
+  it('should get all Users', async () => {
+    const res = await request.get('/api/user');
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toBeInstanceOf(Array);
   });
 });
 

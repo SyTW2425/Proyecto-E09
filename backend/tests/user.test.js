@@ -87,7 +87,8 @@ describe('DELETE /user/:id', () => {
         email: 'delete@example.com',
         password: 'password123',
       });
-    id = user.body.user._id;
+    if (user.statusCode === 201) 
+      id = user.body.user._id;
   });
 
   it('should delete a user', async () => {
@@ -103,6 +104,16 @@ describe('DELETE /user/:id', () => {
     expect(res.statusCode).toBe(403);
     expect(res.body).toHaveProperty('message', 'No token provided');
   });
+
+  it('should return 404 if user is not found', async () => {
+    const res = await request
+      .delete(`/api/user/673b6343562a1a5a6a52d86a`)
+      .set('x-access-token', token);
+
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message', 'User not found');
+  });
+  
 });
 
 describe('PATCH /user', () => {
@@ -117,10 +128,11 @@ describe('PATCH /user', () => {
         email: 'update@example.com',
         password: 'password123',
       });
-    id = user.body.user._id;
+    if (user.statusCode === 201)
+      id = user.body.user._id;
   });
 
-  it('should update a user', async () => {
+  it('should update a user with its id', async () => {
     const res = await request
       .patch('/api/user')
       .set('x-access-token', token)
@@ -129,7 +141,6 @@ describe('PATCH /user', () => {
         username: 'updateduser',
         email: 'updated@example.com',
       });
-
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('message', 'User updated successfully');
   });
@@ -142,5 +153,28 @@ describe('PATCH /user', () => {
 
     expect(res.statusCode).toBe(403);
     expect(res.body).toHaveProperty('message', 'No token provided');
+  });
+
+  it('if no username, email or id is provided, should return 400', async () => {
+    const res = await request
+      .patch('/api/user')
+      .set('x-access-token', token)
+      .send({});
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('message', 'You must provide id, username, or email to update a user');
+  });
+
+  it('should return 404 if user is not found', async () => {
+    const res = await request
+      .patch('/api/user')
+      .set('x-access-token', token)
+      .send({
+        id: '673b6343562a1a5a6a52d868',
+        username: 'updateuser',
+        email: 'update@example.com',
+      });
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message', 'User not found');
   });
 });

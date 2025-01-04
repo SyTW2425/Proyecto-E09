@@ -38,21 +38,11 @@ const userSchema = new Schema({
 
 // Métodos para encriptar y comparar contraseñas
 userSchema.statics.encryptPassword = async (password) => {
-  try {
-    return await bcrypt.hash(password, 10);
-  } catch (error) {
-    console.error("Error encrypting password:", error);
-    throw error; // Propaga el error
-  }
+  return await bcrypt.hash(password, 10);
 };
 
 userSchema.statics.comparePassword = async (password, receivedPassword) => {
-  try {
-    return await bcrypt.compare(password, receivedPassword);
-  } catch (error) {
-    console.error("Error comparing passwords:", error);
-    throw error; // Propaga el error
-  }
+  return await bcrypt.compare(password, receivedPassword);
 };
 
 // Define el modelo User
