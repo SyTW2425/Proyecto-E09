@@ -67,8 +67,6 @@ export const login = async (req, res) => {
     expiresIn: 86400 // 24 hours
   });
 
-  /// Do refresh token here
-
   res.status(201).cookie('access_token', token, {
     httpOnly: true,
     sameSite: 'lax',

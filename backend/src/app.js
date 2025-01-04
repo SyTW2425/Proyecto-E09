@@ -15,11 +15,10 @@ export const app = express();
 app.use(cookieParser());
 
 const corsOptions ={
-	origin:'http://10.6.128.240', 
-	credentials:true,            //access-control-allow-credentials:true
-	optionSuccessStatus:200,
+	origin: process.env.CORS_ORIGIN,
+	credentials: true,
+	optionSuccessStatus: 200,
 }
-
 
 app.use(cors(corsOptions));
 

@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "NODE_ENV=test jest",
+    "test": "NODE_ENV=test jest --coverage && echo | coveralls",
     "start": "node src/app.js"
   },
   "repository": {
@@ -37,11 +37,17 @@
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "babel-jest": "^29.7.0",
-    "mongodb-memory-server": "^10.1.2"
+    "coveralls": "^3.1.1",
+    "mongodb-memory-server": "^10.1.2",
+    "nyc": "^17.1.0"
   },
   "jest": {
     "transform": {
       "^.+\\.js$": "babel-jest"
-    }
+    },
+    "coverageReporters": [
+      "lcov",
+      "text"
+    ]
   }
 }
