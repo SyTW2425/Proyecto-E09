@@ -454,3 +454,84 @@ button.next-round-hidden {
   color: green;
   font-weight: bold;
 }
+
+@property --t {
+  syntax: "<number>";
+  initial-value: 15;
+  inherits: true;
+}
+
+@property --s {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: true;
+}
+
+.countdown-stop {
+  position: fixed;
+  bottom: 0;
+  padding-bottom: 1%;
+  left: 0;
+  padding-left: 10%;
+  animation: none; 
+  --s: calc(var(--t) / 1);
+  display: grid;
+  margin: 1em auto;
+  width: 8vw;
+  aspect-ratio: 1/1;
+
+}
+
+.countdown {
+  position: fixed;
+  bottom: 0;
+  padding-bottom: 1%;
+  left: 0;
+  padding-left: 10%;
+  --s: calc(var(--t) / 1);
+  display: grid;
+  margin: 1em auto;
+  width: 8vw;
+  aspect-ratio: 1/1;
+  animation: t 15s linear forwards;
+}
+
+.countdown::after {
+  grid-column: 1;
+  grid-row: 1;
+  place-self: center;
+  font: 2.5vw/2 ubuntu mono, consolas, monaco, monospace;
+  counter-reset: s var(--s);
+  content: counter(s, decimal-leading-zero);
+}
+
+.countdown-stop::after {
+  grid-column: 1;
+  grid-row: 1;
+  place-self: center;
+  font: 2.5vw/2 ubuntu mono, consolas, monaco, monospace;
+  counter-reset: s var(--s);
+  content: counter(s, decimal-leading-zero);
+}
+
+@keyframes t {
+  to {
+    --t: 0;
+  }
+}
+svg {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+[r] {
+  fill: none;
+  stroke: silver;
+}
+[r] + [r] {
+  --k: calc(var(--t) /15);
+  transform: rotate(-90deg);
+  stroke-linecap: round;
+  stroke: color-mix(in hsl shorter hue, #8a9b0f calc(var(--k) * 100%), #940a3d);
+  stroke-dasharray: var(--k) 1;
+}

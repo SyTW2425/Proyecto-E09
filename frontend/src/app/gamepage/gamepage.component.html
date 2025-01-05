@@ -1,7 +1,7 @@
 <main>
 	<div class="header">
 		<a href="/new_game" (click)="deleteGame()"><mat-icon> arrow_back </mat-icon></a>
-		<a href="/" class="logo" >AniTrackGuess</a>
+		<a href="/new_game" (click)="deleteGame()" class="logo">AniTrackGuess</a>
 		<div id="volume-control" class="header-right">
 			<label for="volume-slider">Volume:</label>
 			<input id="volume-slider" type="range" min="0" max="1" step="0.01" />
@@ -9,15 +9,15 @@
 	</div>
 	<div class="central-column">
 		<h1>Round: {{currentRound}}/{{rounds}}</h1>
-		<div [ngClass]="{'title-not-hidden': cover, 'title-hidden': !cover}">
+		<div [ngClass]="{'title-not-hidden': !roundEnded, 'title-hidden': roundEnded}">
 			<h2>Guess this anime's name!</h2>
 		</div>
-		<div [ngClass]="{'anime-name-right': !cover && correct, 'anime-name-wrong': !cover && !correct}">
+		<div [ngClass]="{'anime-name-right': roundEnded && correct, 'anime-name-wrong': roundEnded && !correct}">
 			{{animeName}}
 		</div>
 		<div class="container">
-			<p class="loading" *ngIf="!videoLoaded">Loading video...</p>
-			<video name="media" [ngClass]="{'video-cover': cover, 'video-uncover': !cover}" [src]="videoUrl" frameborder="0"
+			<p class="loading" *ngIf="!videoLoaded || loading">Loading video...</p>
+			<video name="media" [ngClass]="{'video-cover': !roundEnded, 'video-uncover': roundEnded}" [src]="videoUrl" frameborder="0"
 				id="my_video" allow="encrypted-media">
 			</video>
 			<button [ngClass]="{'play-button-display': !started, 'play-button-hidden': started}" (click)="playPause()"
@@ -38,7 +38,8 @@
 					</mat-option>
 				</mat-autocomplete>
 			</mat-form-field>
-			<button class="submit-answer" type="submit" [disabled]="!videoLoaded || !cover || !started || roundEnded || isSubmitting">Submit Answer!</button>
+			<button class="submit-answer" type="submit"
+				[disabled]="!videoLoaded || !started || roundEnded || isSubmitting">Submit Answer!</button>
 		</form>
 	</div>
 	<div class="cover-section">
@@ -46,7 +47,7 @@
 		<div class="cover-title">
 			<h2>Cover</h2>
 		</div>
-		<img [ngClass]="{'cover': cover, 'uncover': !cover}" [src]="images[0]" alt="Cover" id="cover" />
+		<img [ngClass]="{'cover': !roundEnded, 'uncover': roundEnded}" [src]="images[0]" alt="Cover" id="cover" />
 	</div>
 	<div class="game-overview">
 		<h2>Overview</h2>
@@ -75,8 +76,14 @@
 				</tbody>
 			</table>
 		</div>
+		<div class="countdown" id="countdown">
+			<svg viewBox="-50 -50 100 100" stroke-width="10">
+				<circle r="45"></circle>
+				<circle r="45" pathLength="1"></circle>
+			</svg>
+		</div>
 		<div class="next-round-button">
-			<button [ngClass]="{'next-round-hidden': cover, 'next-round': !cover}"
+			<button [ngClass]="{'next-round-hidden': !roundEnded, 'next-round': roundEnded}"
 				(click)="nextRound()">{{roundButtonLabel}}</button>
 		</div>
 	</div>

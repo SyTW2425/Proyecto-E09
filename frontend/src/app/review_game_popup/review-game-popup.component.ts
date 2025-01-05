@@ -20,14 +20,7 @@ export class ReviewGamePopupComponent {
   }
 
   goToNewGame() {
-    this.gameService.askForGameDelete(localStorage.getItem('gameId') || '').subscribe( 
-      (data) => {
-        console.log(data.message);
-      },
-      (error) => {
-        console.error('Error deleting game:', error);
-      }
-    );
+    this.gameService.askForGameDelete(localStorage.getItem('gameId')!);
     this.router.navigate(['/new_game']);
   }
 }
