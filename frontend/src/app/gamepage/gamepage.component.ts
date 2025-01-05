@@ -156,13 +156,17 @@ export class GamepageComponent {
 		this.animeForm.disable();
 		this.pauseTimer();
 		if (this.timer) clearTimeout(this.timer);
-		this.gameService.sendAnswer(this.gameId, anime).subscribe(
+		let username;
+		if (this.currentRound === this.rounds) {
+			this.roundButtonLabel = 'Review Game';
+			username = localStorage.getItem('username');
+		}
+		this.gameService.sendAnswer(this.gameId, anime, username).subscribe(
 			(data) => {
 				this.roundsData.push({ roundNumber: this.currentRound, anime: this.anime, correct: data.correct });
 				this.animeName = this.anime;
 				this.correct = data.correct;
 				localStorage.setItem('roundsData', JSON.stringify(this.roundsData));
-				if (this.currentRound === this.rounds) this.roundButtonLabel = 'Review Game';
 				this.roundEnded = true;
 				this.videoElement!.currentTime = this.timeStart;
 				this.videoElement!.play();

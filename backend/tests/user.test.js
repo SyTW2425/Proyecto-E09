@@ -162,7 +162,7 @@ describe('PATCH /user', () => {
       .send({});
 
     expect(res.statusCode).toBe(400);
-    expect(res.body).toHaveProperty('message', 'You must provide id, username, or email to update a user');
+    expect(res.body).toHaveProperty('message', 'You must provide id to update a user');
   });
 
   it('should return 404 if user is not found', async () => {
@@ -258,5 +258,32 @@ describe('GET /api/user', () => {
     const res = await request.get('/api/user').set('x-access-token', 'invalidtoken'); // Example random token
     expect(res.statusCode).toBe(401);
     expect(res.body).toHaveProperty('message', 'Unauthorized');
+  });
+
+  it('should get user own information', async () => {
+    user = await request
+      .post('/api/user')
+      .set('x-access-token', token)
+      .send({
+        username: 'userown',
+        email: 'userown@example.com',
+        password: await User.encryptPassword('password123'),
+      });
+    const userRes = await request.post('/auth/login').send({
+      email: 'userown@example.com',
+      password: 'password123',
+    });
+    const userToken = userRes.body.token;
+    const res = await request.get('/api/user/userown').set('x-access-token', userToken);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('username', 'userown');
+    expect(res.body).toHaveProperty('email', 'userown@example.com');
+  });
+
+  it('should get user information by username for admin or moderator', async () => {
+    const res = await request.get('/api/user/testuserx').set('x-access-token', token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('username', 'testuserx');
+    expect(res.body).toHaveProperty('email', 'example@test.com');
   });
 });

@@ -51,16 +51,25 @@ export const getUser = async (req, res) => {
 
 }
 
+export const getUserByUsername = async (req, res) => {
+  const { username } = req.params;
+  const user = await User.findOne().where('username').equals(username);
+  if (!user) {
+    return res.status(404).send({ message: 'User not found' });
+  }
+  return res.send(user);
+}
+
 export const updateUser = async (req, res) => {
   const { id, username, email } = req.body;
 
   let filter = null;
   if (id) {
     filter = { _id: id };
-  } 
+  }
   // If no filter is provided, return an error
   if (!filter) {
-    return res.status(400).send({ message: 'You must provide id, username, or email to update a user' });
+    return res.status(400).send({ message: 'You must provide id to update a user' });
   }
 
   const user = await User.findOneAndUpdate(filter, req.body, {

@@ -2,6 +2,7 @@ import axios from 'axios';
 import stringSimilarity from 'string-similarity';
 
 import Game from '../models/game.js';
+import User from '../models/user.js';
 
 function getRelevantInfo(animethemes) {
   let listAnimeInfo = [];
@@ -50,8 +51,19 @@ export const createGame = async (req, res) => {
   return res.status(200).json({ gameId: game._id, rounds: game.rounds });
 }
 
+async function giveExperience(score, rounds, user) {
+  if (!user) return res.status(404).send({ message: 'User not found' });
+  const experience = Math.floor((score / rounds) * 100 * rounds);
+  user.experience += experience;
+  if (user.experience >= 1000) {
+    user.level += 1;
+    user.experience = user.experience - 1000;
+  }
+  await user.save();
+}
+
 export const checkAnswer = async (req, res) => {
-  const { gameId, userAnswer } = req.body;
+  const { gameId, userAnswer, username } = req.body;
 
   if (!gameId || !userAnswer) {
     return res.status(400).json({ error: 'Faltan datos necesarios.' });
@@ -60,22 +72,30 @@ export const checkAnswer = async (req, res) => {
   const game = await Game.findById(gameId);
 
   const correctAnswer = game.animes[game.currentRound - 1].name;
-  // Normalización básica de texto
+  // Text normalization
   const normalizeText = (text) => text.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
   const isCorrect = normalizeText(userAnswer) === normalizeText(correctAnswer);
 
-  // Validación secundaria usando similitud de cadenas
+  // Secondary check with string similarity
   const similarity = stringSimilarity.compareTwoStrings(userAnswer.toLowerCase(), correctAnswer.toLowerCase());
-  const isSimilar = similarity > 0.80; // Umbral de 80% de similitud
+  const isSimilar = similarity > 0.80; // 80% similarity threshold
 
   const correct = isCorrect || isSimilar ? true : false;
   if (correct) {
     game.score += 1;
     game.currentRound += 1;
+    if (game.currentRound === game.rounds) {
+      const user = await User.findOne().where('username').equals(username);
+      giveExperience(game.score, game.rounds, user);
+    }
     await game.save();
     return res.status(200).send({ message: 'Correct answer', correct });
   } else {
     game.currentRound += 1;
+    if (game.currentRound === game.rounds) {
+      const user = await User.findOne().where('username').equals(username);
+      giveExperience(game.score, game.rounds, user);
+    }
     await game.save();
     return res.status(200).send({ message: 'Incorrect answer', correct });
   }

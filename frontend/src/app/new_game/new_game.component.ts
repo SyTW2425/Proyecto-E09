@@ -29,16 +29,18 @@ export class NewGameComponent implements OnInit {
     if (!document.cookie.includes('token') || document.cookie.toString() === 'token=;') {
       this.router.navigate(['/login']);
     }
+    this.experience = 400;
+    console.log(document.cookie);
     this.userName = localStorage.getItem('username') || 'John Doe';
-    //this.userService.getUser({username: this.userName, email: null, id: null}).subscribe(
-    //  (data) => {
-    //    this.level = data.level;
-    //    this.experience = data.experience;
-    //  },
-    //  (error) => {
-    //    console.error('Error getting user:', error);
-    //  }
-    //);
+    this.userService.getUser(this.userName).subscribe(
+      (data) => {
+        this.level = data.level;
+        this.experience = data.experience;
+      },
+      (error) => {
+        console.error('Error getting user:', error);
+      }
+    );
 
   }
 

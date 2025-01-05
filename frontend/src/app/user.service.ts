@@ -16,7 +16,7 @@ export class UserService {
    * Obtiene el nombre de usuario actual.
    * @returns Un Observable que emite el nombre de usuario.
    */
-	getUser(data: { username: string | null; email: string | null; id: string | null }): Observable<{ username: string; email: string; password: string; token: string, level: number, experience: number }> {
+	a(data: { username: string | null; email: string | null; id: string | null }): Observable<{ username: string; email: string; password: string; token: string, level: number, experience: number }> {
     const params = {
         ...(data.username && { username: data.username }),
         ...(data.email && { email: data.email }),
@@ -27,6 +27,13 @@ export class UserService {
         .get<{ username: string; email: string; password: string; token: string, level: number, experience: number }>(`${this.apiUrl}/user`, { params })
         .pipe(catchError(this.handleError));
 }
+
+// get user with query instead of params /:username
+getUser(username: string): Observable<{ username: string; email: string; password: string; token: string, level: number, experience: number }> {
+		return this.http
+				.get<{ username: string; email: string; password: string; token: string, level: number, experience: number }>(`${this.apiUrl}/user/${username}`)
+				.pipe(catchError(this.handleError));
+	}
 
 	
 

@@ -1,86 +1,259 @@
-import { app } from '../src/app.js'; // Import the app instance
-import request from 'supertest';
-import jwt from 'jsonwebtoken';
-import { User } from '../src/models/user.js';
-import { Role } from '../src/models/role.js';
+import mongoose from 'mongoose';
+import supertest from 'supertest';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { app, startServer } from '../src/app.js';
+import User from '../src/models/user.js';
+import Role from '../src/models/role.js';
 
-jest.mock('../src/models/user.js');
-jest.mock('../src/models/role.js');
+const request = supertest(app);
 
-describe('Authentication Middleware', () => {
-	let validToken;
-	let invalidToken = 'invalidToken';
+let mongoServer;
+let validToken; // Token para autenticación
+let adminRole;
+let moderatorRole;
+let adminUser;
+let moderatorUser;
 
-	beforeAll(() => {
-		process.env.SECRET = '97e5a9c49e059d0aec06be4148c21b6ff8e9c68e9ec8ee78d230d8778a4443b4addd51147071fc80a315262ce08c77841f3c14942a37e524e35a670cc442c15ec3363d09749dc0411007156420b5b2a50163dd7e3f49c31df5748bcb027372b7df77db0732f52488b737aeb07f7d152a7d7db6ca3a8b5a3e373b9c41758c6c22e4c98e45775b0c87abbde5d0d0233438d6aea69e53fcb10d5fe267c638bb43d896301e5e1b764a6e87334fe4462873e7c3d35a7c9c463f7f1cd97142e9f7165d4df0009cc6cc10739b907a6af21142b625a000c7bc06d47ad8ddab0a264b2bfee2353ac0962a87254b1e2b9c539264ae260b5b0255dc8488d270c4d7d9467e8b';
-		validToken = jwt.sign({ id: 'testUserId' }, process.env.SECRET, { expiresIn: '1h' });
-	});
+// Configuración inicial
+beforeAll(async () => {
+  mongoServer = await MongoMemoryServer.create();
+  const uri = mongoServer.getUri();
+  await mongoose.connect(uri);
+  
+  // Crear los roles 'admin' y 'moderator'
+  adminRole = await Role.create({ name: 'admin' });
+  moderatorRole = await Role.create({ name: 'moderator' });
 
-	beforeEach(() => {
-		jest.spyOn(console, 'error').mockImplementation(() => {});
-	});
+  // Crear un usuario admin para obtener token
+  adminUser = await User.create({
+    username: 'admin',
+    email: 'admin@example.com',
+    password: await User.encryptPassword('password123'),
+    roles: [adminRole._id],
+  });
 
-	afterEach(() => {
-		jest.clearAllMocks();
-		console.error.mockRestore();
-	});
+  // Crear un usuario moderador
+  moderatorUser = await User.create({
+    username: 'moderator',
+    email: 'moderator@example.com',
+    password: await User.encryptPassword('password123'),
+    roles: [moderatorRole._id],
+  });
 
-	describe('verifyToken', () => {
-		it('should return 403 if no token is provided', async () => {
-			const response = await request(app)
-				.post('/api/user')
-				.set('x-access-token', ''); // No token provided
-			expect(response.status).toBe(403);
-			expect(response.body.message).toBe('No token provided');
-		});
+  // Crear un usuario regular
+  const regularUser = await User.create({
+    username: 'user',
+    email: 'user@example.com',
+    password: await User.encryptPassword('password123'),
+    roles: [],
+  });
 
-		it('should return 401 if token is invalid', async () => {
-			const response = await request(app)
-				.post('/api/user')
-				.set('x-access-token', invalidToken); // Invalid token
-			expect(response.status).toBe(401);
-			expect(response.body.message).toBe('Unauthorized');
-			expect(console.error).toHaveBeenCalledWith('jwt malformed');
-		});
-	});
+  // Iniciar sesión con el usuario admin y obtener el token
+  const res = await request.post('/auth/login').send({
+    email: 'admin@example.com',
+    password: 'password123',
+  });
+  validToken = res.body.token;
 
-	describe('isAdmin', () => {
-		it('should return 403 if no token is provided', async () => {
-			const response = await request(app)
-				.patch('/api/user')
-				.set('x-access-token', '');
-			expect(response.status).toBe(403);
-			expect(response.body.message).toBe('No token provided');
-		});
+  startServer();
+});
 
-		it('should return 401 if token is invalid', async () => {
-			const response = await request(app)
-				.patch('/api/user')
-				.set('x-access-token', invalidToken);
-			expect(response.status).toBe(401);
-			expect(response.body.message).toBe('Unauthorized');
-			expect(console.error).toHaveBeenCalledWith('jwt malformed');
-		});
+afterAll(async () => {
+  await mongoose.connection.dropDatabase();
+  await mongoose.connection.close();
+  await mongoServer.stop();
+});
 
-		
-	});
+describe('verifyToken', () => {
+  it('should return 403 if no token is provided', async () => {
+    const response = await request
+      .post('/api/user')
+      .set('x-access-token', ''); // No token provided
+    expect(response.status).toBe(403);
+    expect(response.body.message).toBe('No token provided');
+  });
 
-	describe('isModerator', () => {
-		it('should return 403 if no token is provided', async () => {
-			const response = await request(app)
-				.post('/api/user')
-				.set('x-access-token', '');
-			expect(response.status).toBe(403);
-			expect(response.body.message).toBe('No token provided');
-		});
+  it('should return 401 if token is invalid', async () => {
+    const response = await request
+      .post('/api/user')
+      .set('x-access-token', 'invalidToken'); // Invalid token
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe('Unauthorized');
+  });
 
-		it('should return 401 if token is invalid', async () => {
-			const response = await request(app)
-				.post('/api/user')
-				.set('x-access-token', invalidToken);
-			expect(response.status).toBe(401);
-			expect(response.body.message).toBe('Unauthorized');
-			expect(console.error).toHaveBeenCalledWith('jwt malformed');
-		});
-	});
+  it('should call next() if token is valid', async () => {
+    const response = await request
+      .post('/api/user')
+      .set('x-access-token', validToken).send({
+        username: 'testuser',
+        email: 'testuser@example.com',
+        password: await User.encryptPassword('password123'),
+      });
+    expect(response.status).toBe(201);
+  });
+});
+
+describe('isAdmin', () => {
+  it('should return 403 if no token is provided', async () => {
+    const response = await request
+      .patch('/api/user')
+      .set('x-access-token', ''); // No token provided
+    expect(response.status).toBe(403);
+    expect(response.body.message).toBe('No token provided');
+  });
+
+  it('should return 401 if token is invalid', async () => {
+    const response = await request
+      .patch('/api/user')
+      .set('x-access-token', 'invalidToken'); // Invalid token
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe('Unauthorized');
+  });
+
+  it('should return 403 if user is not an admin', async () => {
+    const regularUserRes = await request.post('/auth/login').send({
+      email: 'user@example.com',
+      password: 'password123',
+    });
+
+    const response = await request
+      .patch('/api/user')
+      .set('x-access-token', regularUserRes.body.token);
+
+    expect(response.status).toBe(403);
+    expect(response.body.message).toBe('Require moderator role');
+  });
+
+  it('should call next() if user is admin', async () => {
+    const response = await request
+      .get('/api/user')
+      .set('x-access-token', validToken); // Valid token for admin
+
+    expect(response.status).toBe(200);
+  });
+});
+
+describe('isModerator', () => {
+  it('should return 403 if no token is provided', async () => {
+    const response = await request
+      .post('/api/user')
+      .set('x-access-token', ''); // No token provided
+    expect(response.status).toBe(403);
+    expect(response.body.message).toBe('No token provided');
+  });
+
+  it('should return 401 if token is invalid', async () => {
+    const response = await request
+      .post('/api/user')
+      .set('x-access-token', 'invalidToken'); // Invalid token
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe('Unauthorized');
+  });
+
+  it('should call next() if user is a moderator', async () => {
+    const moderatorRes = await request.post('/auth/login').send({
+      email: 'moderator@example.com',
+      password: 'password123',
+    });
+
+    const response = await request
+      .get('/api/user/user')
+      .set('x-access-token', moderatorRes.body.token);
+
+    expect(response.status).toBe(200);
+  });
+});
+
+describe('isMySelf', () => {
+  it('should return 403 if no token is provided', async () => {
+    const response = await request
+      .post('/api/user')
+      .set('x-access-token', ''); // No token provided
+    expect(response.status).toBe(403);
+    expect(response.body.message).toBe('No token provided');
+  });
+
+  it('should return 401 if token is invalid', async () => {
+    const response = await request
+      .post('/api/user')
+      .set('x-access-token', 'invalidToken'); // Invalid token
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe('Unauthorized');
+  });
+
+  it('should return 403 if username does not match the logged-in user', async () => {
+    const regularUserRes = await request.post('/auth/login').send({
+      email: 'user@example.com',
+      password: 'password123',
+    });
+    const response = await request
+      .get('/api/user/moderator')
+      .set('x-access-token', regularUserRes.body.token);
+
+    expect(response.status).toBe(403);
+    expect(response.body.message).toBe('You can only access your own information');
+  });
+
+  it('should call next() if username matches the logged-in user', async () => {
+    const regularUserRes = await request.post('/auth/login').send({
+      email: 'user@example.com',
+      password: 'password123',
+    });
+    const response = await request
+      .get('/api/user/user') // Username matches the logged-in user (user)
+      .set('x-access-token', regularUserRes.body.token);
+
+    expect(response.status).toBe(200);
+  });
+});
+
+describe('isMySelforModerator', () => {
+  it('should return 403 if no token is provided', async () => {
+    const response = await request
+      .get('/api/user/moderator')
+      .set('x-access-token', ''); // No token provided
+    expect(response.status).toBe(403);
+    expect(response.body.message).toBe('No token provided');
+  });
+
+  it('should return 401 if token is invalid', async () => {
+    const response = await request
+      .get('/api/user/moderator')
+      .set('x-access-token', 'invalidToken'); // Invalid token
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe('Unauthorized');
+  });
+
+  it('should return 403 if user is not himself or moderator', async () => {
+    const regularUserRes = await request.post('/auth/login').send({
+      email: 'testuser@example.com',
+      password: 'password123',
+    });
+    const response = await request
+      .get('/api/user/user')
+      .set('x-access-token', regularUserRes.body.token);
+
+    expect(response.status).toBe(403);
+    expect(response.body.message).toBe('You can only access your own information');
+  });
+
+  it('should call next() if user is himself or moderator', async () => {
+    const regularUserRes = await request.post('/auth/login').send({
+      email: 'user@example.com',
+      password: 'password123',
+    });
+    const response = await request
+      .get('/api/user/user')
+      .set('x-access-token', regularUserRes.body.token);
+    expect(response.status).toBe(200);
+
+    const moderatorRes = await request.post('/auth/login').send({
+      email: 'moderator@example.com',
+      password: 'password123',
+    });
+    const response2 = await request
+      .get('/api/user/user')
+      .set('x-access-token', moderatorRes.body.token);
+    expect(response2.status).toBe(200);
+  });
 });

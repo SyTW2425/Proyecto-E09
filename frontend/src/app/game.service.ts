@@ -67,9 +67,8 @@ export class GameService {
       .pipe(catchError(this.handleError));
   }
 
-
-  public sendAnswer(gameId: string, userAnswer: string): Observable<{ correct: boolean }> {
-    const body = { gameId, userAnswer };
+  public sendAnswer(gameId: string, userAnswer: string, username?: string | null): Observable<{ correct: boolean }> {
+    const body = { gameId, userAnswer, username };
     return this.http
       .patch<{ correct: boolean }>(`${this.apiUrl}/answer`, body, {
         withCredentials: true,

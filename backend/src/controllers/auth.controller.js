@@ -3,6 +3,7 @@ import Role from '../models/role.js';
 
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
+import e from 'express';
 
 export const register = async (req, res) => {
   const { username, email, password, roles } = req.body;
@@ -27,6 +28,8 @@ export const register = async (req, res) => {
   const publicData = {
     username: user.username,
     email: user.email,
+    level: user.level,
+    experience: user.experience,
   };
   
  jwt.sign({ id: user._id, publicData: publicData }, process.env.SECRET, {
@@ -46,6 +49,8 @@ export const login = async (req, res) => {
   const publicData = {
     username: userFound.username,
     email: userFound.email,
+    level: userFound.level,
+    experience: userFound.experience,
   };
   
   const token = jwt.sign({ id: userFound._id, publicData: publicData }, process.env.SECRET, {

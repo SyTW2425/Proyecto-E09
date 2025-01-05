@@ -20,8 +20,14 @@
         <a (click)="logout()"><mat-icon>logout</mat-icon>Logout</a>
       </li>
     </ul>
+  
     <h3 class="username">{{userName}}</h3>
-    <!--<p class="level">Level: {{level}}</p> !-->
+    <p class="level">Level: {{level}}</p>
+    <div class="progress">
+      <div class="progress-bar" [style.width.%]="experience * 0.1" ></div>
+      <p class="progress-text">{{experience}} / 1000 XP</p>
+    </div>  
+
   </aside>
 
   <!-- HTML !-->
