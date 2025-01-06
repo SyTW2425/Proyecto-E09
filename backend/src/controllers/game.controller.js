@@ -119,12 +119,12 @@ export const checkAnswer = async (req, res) => {
   const isSimilar = similarity > 0.80;      // 80% similarity threshold
 
   const correct = isCorrect || isSimilar ? true : false;
-  game.currentRound += 1;
   game.score += correct ? 1 : 0;
   if (game.currentRound === game.rounds) {  // Last round and grant experience
     const user = await User.findOne().where('username').equals(username);
     giveExperience(game.score, game.rounds, user);
   }
+  game.currentRound += 1;
   await game.save();
   return res.status(200).send({ message: correct ? 'Correct answer' : 'Incorrect answer', correct });
 }

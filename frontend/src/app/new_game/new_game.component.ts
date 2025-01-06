@@ -29,7 +29,7 @@ export class NewGameComponent implements OnInit {
     if (!document.cookie.includes('token') || document.cookie.toString() === 'token=;') {
       this.router.navigate(['/login']);
     }
-    this.experience = 400;
+    this.experience = 0;
     this.userName = localStorage.getItem('username') || 'John Doe';
     this.userService.getUser(this.userName).subscribe(
       (data) => {
