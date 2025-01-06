@@ -5,7 +5,7 @@ dotenv.config();
 
 export const connectDB = async () => {
   try {
-  // from .env or from environment variables
+    // from .env or from environment variables
     await mongoose.connect(process.env.ATLAS_URI);
     console.log('DB is connected');
   } catch (error) {

@@ -12,9 +12,9 @@ export const register = async (req, res) => {
   } else if (!password) {
     return res.status(400).json({ message: 'Password is required' });
   }
-  
+
   const newUser = new User({ username, email, password: await User.encryptPassword(password) });
-  
+
   if (roles) {
     const foundRoles = await Role.find({ name: { $in: roles } });
     newUser.roles = foundRoles.map(role => role._id);
@@ -22,7 +22,7 @@ export const register = async (req, res) => {
     const role = await Role.findOne({ name: 'user' });
     newUser.roles = [role._id];
   }
-  
+
   const user = await newUser.save();
 
   const publicData = {
@@ -31,8 +31,8 @@ export const register = async (req, res) => {
     level: user.level,
     experience: user.experience,
   };
-  
- jwt.sign({ id: user._id, publicData: publicData }, process.env.SECRET, {
+
+  jwt.sign({ id: user._id, publicData: publicData }, process.env.SECRET, {
     expiresIn: 86400 // 24 hours
   }, (error, token) => {
     res.status(201).json({ token });
@@ -52,7 +52,7 @@ export const login = async (req, res) => {
     level: userFound.level,
     experience: userFound.experience,
   };
-  
+
   const token = jwt.sign({ id: userFound._id, publicData: publicData }, process.env.SECRET, {
     expiresIn: 86400 // 24 hours
   });

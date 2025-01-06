@@ -15,13 +15,13 @@ userRouter.get('/user/:username', [authJwt.verifyToken, authJwt.isMySelfOrModera
 
 userRouter.post('/user', [authJwt.verifyToken, authJwt.isAdmin, validator.checkDuplicateUsernameOrEmail, validator.checkRolesExisted],
   userController.createUser, async (req, res) => {
-});
+  });
 
 userRouter.delete('/user/:id', [authJwt.verifyToken, authJwt.isAdmin], userController.deleteById, async (req, res) => {
 });
 
 userRouter.patch('/user', [authJwt.verifyToken, authJwt.isModerator, validator.checkRolesExisted],
   userController.updateUser, async (req, res) => {
-});
+  });
 
 export default userRouter;

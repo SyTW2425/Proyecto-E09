@@ -14,7 +14,7 @@ import { connectDB, closeDB } from './db/mongoose.js';
 export const app = express();
 app.use(cookieParser());
 
-const corsOptions ={
+const corsOptions = {
 	origin: process.env.CORS_ORIGIN,
 	credentials: true,
 	optionSuccessStatus: 200,
