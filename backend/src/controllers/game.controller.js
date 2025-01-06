@@ -51,16 +51,16 @@ export const createGame = async (req, res) => {
   return res.status(200).json({ gameId: game._id, rounds: game.rounds });
 }
 
-async function giveExperience(score, rounds, user) {
-  if (!user) return res.status(404).send({ message: 'User not found' });
+export const giveExperience = async (score, rounds, user) => {
+  if (!user) throw new Error('User not found');
   const experience = Math.floor((score / rounds) * 100 * rounds);
   user.experience += experience;
-  if (user.experience >= 1000) {
+  while (user.experience >= 1000) {
     user.level += 1;
-    user.experience = user.experience - 1000;
+    user.experience -= 1000;
   }
   await user.save();
-}
+};
 
 export const checkAnswer = async (req, res) => {
   const { gameId, userAnswer, username } = req.body;
@@ -81,24 +81,14 @@ export const checkAnswer = async (req, res) => {
   const isSimilar = similarity > 0.80; // 80% similarity threshold
 
   const correct = isCorrect || isSimilar ? true : false;
-  if (correct) {
-    game.score += 1;
-    game.currentRound += 1;
-    if (game.currentRound === game.rounds) {
-      const user = await User.findOne().where('username').equals(username);
-      giveExperience(game.score, game.rounds, user);
-    }
-    await game.save();
-    return res.status(200).send({ message: 'Correct answer', correct });
-  } else {
-    game.currentRound += 1;
-    if (game.currentRound === game.rounds) {
-      const user = await User.findOne().where('username').equals(username);
-      giveExperience(game.score, game.rounds, user);
-    }
-    await game.save();
-    return res.status(200).send({ message: 'Incorrect answer', correct });
+  game.currentRound += 1;
+  game.score += correct ? 1 : 0;
+  if (game.currentRound === game.rounds) {
+    const user = await User.findOne().where('username').equals(username);
+    giveExperience(game.score, game.rounds, user);
   }
+  await game.save();
+  return res.status(200).send({ message: correct ? 'Correct answer' : 'Incorrect answer', correct });
 }
 
 export const getGameCurrentInfo = async (req, res) => {

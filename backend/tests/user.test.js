@@ -4,11 +4,14 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { app, startServer } from '../src/app.js';
 import User from '../src/models/user.js';
 import Role from '../src/models/role.js';
+import '../src/controllers/user.controller.js';
+import { getUserByUsername } from '../src/controllers/user.controller.js';
 
 const request = supertest(app);
 let mongoServer;
-let token; // Token para autenticación
-let adminRole;
+let token, token2; // Token para autenticación
+let adminRole, userRole;
+jest.spyOn(console, 'error').mockImplementation();
 
 // Configuración inicial
 beforeAll(async () => {
@@ -19,9 +22,9 @@ beforeAll(async () => {
 
   // Verificar si el rol 'admin' existe, si no, crearlo
   adminRole = await Role.findOne({ name: 'admin' });
-  if (!adminRole) {
-    adminRole = await Role.create({ name: 'admin' });
-  }
+  if (!adminRole) adminRole = await Role.create({ name: 'admin' });
+  userRole = await Role.findOne({ name: 'user' });
+  if (!userRole) userRole = await Role.create({ name: 'user' });
 
   // Crear un usuario admin para obtener token
   adminRole = await Role.findOne({ name: 'admin' });
@@ -32,12 +35,26 @@ beforeAll(async () => {
     roles: [adminRole._id],
   });
 
+  const user = await User.create({
+    username: 'user',
+    email: 'user@user.com',
+    password: await User.encryptPassword('password123'),
+    roles: [userRole._id],
+  });
+
   const res = await request.post('/auth/login').send({
     email: 'admin@example.com',
     password: 'password123',
   });
 
   token = res.body.token;
+
+  const res2 = await request.post('/auth/login').send({
+    email: 'user@user.com',
+    password: 'password123',
+  });
+
+  token2 = res2.body.token;
 });
 
 afterAll(async () => {
@@ -87,7 +104,7 @@ describe('DELETE /user/:id', () => {
         email: 'delete@example.com',
         password: 'password123',
       });
-    if (user.statusCode === 201) 
+    if (user.statusCode === 201)
       id = user.body.user._id;
   });
 
@@ -113,7 +130,7 @@ describe('DELETE /user/:id', () => {
     expect(res.statusCode).toBe(404);
     expect(res.body).toHaveProperty('message', 'User not found');
   });
-  
+
 });
 
 describe('PATCH /user', () => {
@@ -285,5 +302,20 @@ describe('GET /api/user', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('username', 'testuserx');
     expect(res.body).toHaveProperty('email', 'example@test.com');
+  });
+
+  it('should return 404 if no user is found', async () => {
+    // use getUserByUsername function
+    const req = { params: { username: 'nonexistent' } };
+    const res = { status: jest.fn().mockReturnThis(), send: jest.fn() };
+    await getUserByUsername(req, res);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.send).toHaveBeenCalledWith({ message: 'User not found' });
+  });
+
+  it('should not get all users if not admin', async () => {
+    const res = await request.get('/api/user').set('x-access-token', token2);
+    expect(res.statusCode).toBe(403);
+    expect(res.body).toHaveProperty('message', 'Require admin role');
   });
 });

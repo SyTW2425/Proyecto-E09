@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 let mongoServer;
+jest.spyOn(console, 'log').mockImplementation();
 
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
@@ -53,7 +54,7 @@ describe('Role and User Creation', () => {
     expect(user.username).toBe('kaladin');
     expect(user.email).toBe('kaladin@bendito');
     expect(user.roles).toHaveLength(1);
-    
+
     const adminRole = await Role.findOne({ name: 'admin' });
     expect(user.roles[0].toString()).toBe(adminRole._id.toString());
   });

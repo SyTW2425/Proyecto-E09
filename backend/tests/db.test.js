@@ -5,11 +5,11 @@ jest.mock('mongoose');
 
 jest.spyOn(console, 'log').mockImplementation();
 jest.spyOn(console, 'error').mockImplementation();
-jest.spyOn(process, 'exit').mockImplementation(() => {});  
+jest.spyOn(process, 'exit').mockImplementation(() => { });
 
 describe('Database connection', () => {
   afterEach(() => {
-    jest.clearAllMocks(); 
+    jest.clearAllMocks();
   });
 
   it('should connect to the database', async () => {
@@ -27,12 +27,12 @@ describe('Database connection', () => {
 
     await connectDB();
     expect(console.error).toHaveBeenCalledWith('Database connection error:', errorMessage);
-    expect(process.exit).toHaveBeenCalledWith(1); 
+    expect(process.exit).toHaveBeenCalledWith(1);
   });
 
   it('should close the database connection', async () => {
     mongoose.connection = {
-      close: jest.fn().mockResolvedValueOnce(true), 
+      close: jest.fn().mockResolvedValueOnce(true),
     };
 
     await closeDB();
@@ -43,11 +43,11 @@ describe('Database connection', () => {
   it('should handle disconnection errors', async () => {
     const errorMessage = 'Disconnection error';
     mongoose.connection = {
-      close: jest.fn().mockRejectedValueOnce(new Error(errorMessage)), 
+      close: jest.fn().mockRejectedValueOnce(new Error(errorMessage)),
     };
 
     await closeDB();
     expect(console.error).toHaveBeenCalledWith('Database disconnection error:', errorMessage);
-    expect(process.exit).toHaveBeenCalledWith(1); 
+    expect(process.exit).toHaveBeenCalledWith(1);
   });
 });

@@ -13,13 +13,15 @@ let adminRole;
 let moderatorRole;
 let adminUser;
 let moderatorUser;
+jest.spyOn(console, 'error').mockImplementation();
+
 
 // Configuración inicial
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
   await mongoose.connect(uri);
-  
+
   // Crear los roles 'admin' y 'moderator'
   adminRole = await Role.create({ name: 'admin' });
   moderatorRole = await Role.create({ name: 'moderator' });

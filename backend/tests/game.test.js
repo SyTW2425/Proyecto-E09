@@ -3,6 +3,8 @@ import supertest from 'supertest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { app, startServer } from '../src/app.js';
 import Game from '../src/models/game.js';
+import User from '../src/models/user.js';
+import { giveExperience } from '../src/controllers/game.controller.js';
 
 const request = supertest(app);
 let mongoServer;
@@ -133,14 +135,13 @@ describe('PATCH /game/answer', () => {
     expect(res.body).toHaveProperty('correct', true);
   });
 
-  
   it('should check an incorrect answer', async () => {
     const res = await request
-    .patch('/game/answer')
-    .send({
-      gameId,
-      userAnswer: 'AnimeX'
-    });
+      .patch('/game/answer')
+      .send({
+        gameId,
+        userAnswer: 'AnimeX'
+      });
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('message', 'Incorrect answer');
     expect(res.body).toHaveProperty('correct', false);
@@ -157,7 +158,7 @@ describe('PATCH /game/answer', () => {
     expect(res.body).toHaveProperty('message', 'Correct answer');
     expect(res.body).toHaveProperty('correct', true);
   });
-  
+
   it('should return 400 if missing gameId or userAnswer', async () => {
     const res = await request
       .patch('/game/answer')
@@ -223,5 +224,109 @@ describe('DELETE /game/:gameId', () => {
       .delete('/game/invalidGameId');
     expect(res.statusCode).toBe(500);
     expect(res.body).toHaveProperty('message', 'Error deleting game');
+  });
+});
+
+describe('giveExperience', () => {
+  let user;
+
+  beforeEach(async () => {
+    user = new User({
+      username: 'testuser',
+      email: 'testuser@example.com',
+      password: await User.encryptPassword('password123'),
+      level: 1,
+      experience: 0,
+    });
+    await user.save();
+  });
+
+  afterEach(async () => {
+    await mongoose.connection.db.dropDatabase();
+  });
+
+  it('should add experience to the user', async () => {
+    const score = 3;
+    const rounds = 5;
+
+    await giveExperience(score, rounds, user);
+
+    const updatedUser = await User.findById(user._id);
+    expect(updatedUser.experience).toBe(300);
+    expect(updatedUser.level).toBe(1);
+  });
+
+  it('should handle level-up and adjust experience correctly', async () => {
+    user.experience = 900;
+    await user.save();
+
+    const score = 3;
+    const rounds = 5;
+
+    await giveExperience(score, rounds, user);
+
+    const updatedUser = await User.findById(user._id);
+    expect(updatedUser.experience).toBe(200);
+    expect(updatedUser.level).toBe(2);
+  });
+
+  it('should handle multiple level-ups if experience exceeds thresholds', async () => {
+    user.experience = 1800;
+    await user.save();
+
+    const score = 5;
+    const rounds = 5;
+
+    await giveExperience(score, rounds, user);
+
+    const updatedUser = await User.findById(user._id);
+    expect(updatedUser.experience).toBe(300);
+    expect(updatedUser.level).toBe(3);
+  });
+
+  it('should not modify username, email, or password when updating experience', async () => {
+    const initialUsername = user.username;
+    const initialEmail = user.email;
+    const initialPassword = user.password;
+
+    const score = 3;
+    const rounds = 5;
+
+    await giveExperience(score, rounds, user);
+
+    const updatedUser = await User.findById(user._id);
+    expect(updatedUser.username).toBe(initialUsername);
+    expect(updatedUser.email).toBe(initialEmail);
+    expect(await User.comparePassword('password123', updatedUser.password)).toBe(true);
+  });
+
+  it('should throw an error if the user is null', async () => {
+    const score = 3;
+    const rounds = 5;
+
+    await expect(giveExperience(score, rounds, null)).rejects.toThrow();
+  });
+
+  it('if a game gets to its last round, the user should get experience', async () => {
+    const newGame = new Game({
+      rounds: 2,
+      animes: [
+        { name: 'Anime1', images: ['image1.jpg'], songName: 'Song1', video: 'video1.mp4', audio: 'audio1.mp3' }
+      ]
+    });
+    const game = await newGame.save();
+    gameId = game._id;
+
+    const res = await request
+      .patch('/game/answer')
+      .send({
+        gameId,
+        userAnswer: 'Anime1',
+        username: user.username
+      });
+
+    const updatedUser = await User.findById(user._id);
+    expect(updatedUser.experience).toBe(100);
+    expect(updatedUser.level).toBe(1);
   });
 });

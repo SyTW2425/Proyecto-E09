@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import supertest from 'supertest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { app, startServer } from '../src/app.js';
-import User from '../src/models/user.js'; 
-import Role from '../src/models/role.js'; 
+import User from '../src/models/user.js';
+import Role from '../src/models/role.js';
 
 const request = supertest(app);
 let mongoServer;
@@ -27,7 +27,7 @@ afterAll(async () => {
 
 // Clean DB between tests
 afterEach(async () => {
- await mongoose.connection.db.dropDatabase();
+  await mongoose.connection.db.dropDatabase();
 });
 
 describe('POST /auth/register', () => {
@@ -70,7 +70,7 @@ describe('POST /auth/register', () => {
     expect(res.body).toHaveProperty('message');
   });
 
-  it ('roles can be assigned to a User', async () => {
+  it('roles can be assigned to a User', async () => {
     const res = await request
       .post('/auth/register')
       .send({
@@ -123,11 +123,11 @@ describe('POST /auth/register', () => {
 
 describe('POST /auth/login', () => {
   beforeEach(async () => {
-		const password = await User.encryptPassword('password');
+    const password = await User.encryptPassword('password');
     await User.create({ username: 'testuser', email: 'example@test.com', password: password });
 
   });
-	it('should login a User with valid credentials', async () => {
+  it('should login a User with valid credentials', async () => {
     const res = await request
       .post('/auth/login')
       .send({
