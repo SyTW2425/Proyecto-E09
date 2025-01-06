@@ -114,7 +114,7 @@ describe('PATCH /game/answer', () => {
     gameId = game._id;
 
     const newGame2 = new Game({
-      rounds: 1,
+      rounds: 3, // There is only one anime in this game but we don't want to trigger the experience logic that needs a username to be passed
       animes: [
         { name: 'My Hero Academia', images: ['image3.jpg'], songName: 'Song3', video: 'video3.mp4', audio: 'audio3.mp3' },
       ]
@@ -309,7 +309,7 @@ describe('giveExperience', () => {
 
   it('if a game gets to its last round, the user should get experience', async () => {
     const newGame = new Game({
-      rounds: 2,
+      rounds: 1,
       animes: [
         { name: 'Anime1', images: ['image1.jpg'], songName: 'Song1', video: 'video1.mp4', audio: 'audio1.mp3' }
       ]
