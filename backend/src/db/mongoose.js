@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+/**
+ * Connect to the database
+ */
 export const connectDB = async () => {
   try {
     // from .env or from environment variables
@@ -14,6 +17,9 @@ export const connectDB = async () => {
   }
 };
 
+/**
+ * Close the database connection
+ */
 export const closeDB = async () => {
   try {
     await mongoose.connection.close();

@@ -1,6 +1,9 @@
 import Role from '../models/role.js';
 import User from '../models/user.js'
 
+/**
+ * Create the roles in the database
+ */
 export const createRoles = async () => {
   // Verify if there are roles in the database
   const count = await Role.estimatedDocumentCount();
@@ -12,6 +15,9 @@ export const createRoles = async () => {
   ]);
 }
 
+/**
+ * Create the admin user in the database
+ */
 export const createAdminUser = async () => {
   const user = await User.findOne({ email: 'kaladin@bendito' });
   if (!user) {
