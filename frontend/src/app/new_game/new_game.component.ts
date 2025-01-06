@@ -30,7 +30,6 @@ export class NewGameComponent implements OnInit {
       this.router.navigate(['/login']);
     }
     this.experience = 400;
-    console.log(document.cookie);
     this.userName = localStorage.getItem('username') || 'John Doe';
     this.userService.getUser(this.userName).subscribe(
       (data) => {
