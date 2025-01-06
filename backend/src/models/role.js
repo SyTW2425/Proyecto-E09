@@ -2,6 +2,9 @@ import mongoose, { Schema } from 'mongoose';
 
 export const ROLES = ["user", "admin", "moderator"];
 
+/**
+ * Role schema
+ */
 const roleSchema = new Schema({
   name: {
     type: String,

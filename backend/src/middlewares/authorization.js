@@ -1,8 +1,15 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 import Role from '../models/role.js';
-import { authJwt } from './index.js';
 
+/**
+ * Verify the token
+ * @param {Object} req - Request object with the token: x-access-token
+ * @param {Object} res - Response object: message
+ * @param {Function} next - Callback function
+ * @returns {Function} - Callback function
+ * @throws {Object} - Response object with the error message: Unauthorized
+ */
 export const verifyToken = async (req, res, next) => {
   try {
     const token = req.headers['x-access-token'];
@@ -20,6 +27,14 @@ export const verifyToken = async (req, res, next) => {
   }
 }
 
+/**
+ * Check if the user is admin
+ * @param {Object} req - Request object with the token: x-access-token
+ * @param {Object} res - Response object: message
+ * @param {Function} next - Callback function
+ * @returns {Function} - Callback function
+ * @throws {Object} - Response object with the error message: Require admin role
+ */
 export const isAdmin = async (req, res, next) => {
   const token = req.header('x-access-token');
   if (!token) return res.status(403).json({ message: 'No token provided' });
@@ -28,14 +43,20 @@ export const isAdmin = async (req, res, next) => {
   const user = await User.findById(req.userId);
   const roles = await Role.find({ _id: { $in: user.roles } });
   for (let i = 0; i < roles.length; i++) {
-    if (roles[i].name === 'admin') {
-      return next(); // the user is admin
-    }
+    if (roles[i].name === 'admin') return next();
   }
   // If the user is not admin
   return res.status(403).json({ message: 'Require admin role' });
 };
 
+/**
+ * Check if the user is moderator
+ * @param {Object} req - Request object with the token: x-access-token
+ * @param {Object} res - Response object: message
+ * @param {Function} next - Callback function
+ * @returns {Function} - Callback function
+ * @throws {Object} - Response object with the error message: Require moderator role
+ */
 export const isModerator = async (req, res, next) => {
   const token = req.header('x-access-token');
   if (!token) return res.status(403).json({ message: 'No token provided' });
@@ -52,6 +73,14 @@ export const isModerator = async (req, res, next) => {
   return res.status(403).json({ message: 'Require moderator role' });
 }
 
+/**
+ * Check if the user is moderator or admin
+ * @param {Object} req - Request object with the token: x-access-token
+ * @param {Object} res - Response object: message
+ * @param {Function} next - Callback function
+ * @returns {Function} - Callback function
+ * @throws {Object} - Response object with the error message: Require moderator role
+ */
 export const isMySelfOrModerator = async (req, res, next) => {
   const token = req.header('x-access-token');
   if (!token) return res.status(403).json({ message: 'No token provided' });

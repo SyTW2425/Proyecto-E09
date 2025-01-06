@@ -1,5 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
 
+/**
+ * Define el esquema de la colección de juegos
+ */
 const gameSchema = new Schema({
     currentRound: {
         type: Number,

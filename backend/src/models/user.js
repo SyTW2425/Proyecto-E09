@@ -1,6 +1,9 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
 
+/**
+ * Define el esquema de la colección de usuarios
+ */
 const userSchema = new Schema({
   username: {
     type: String,
